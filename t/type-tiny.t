@@ -33,7 +33,7 @@ subtest(
             Int, '[$_]',
         );
 
-        _test_arrayref_int_coercion($type);
+        _test_int_to_arrayref_coercion($type);
     }
 );
 
@@ -44,7 +44,7 @@ subtest(
             Int, sub { [$_] },
         );
 
-        _test_arrayref_int_coercion($type);
+        _test_int_to_arrayref_coercion($type);
     }
 );
 
@@ -57,7 +57,7 @@ subtest(
             $myint, '[$_]',
         );
 
-        _test_arrayref_int_coercion($type);
+        _test_int_to_arrayref_coercion($type);
     }
 );
 
@@ -68,7 +68,7 @@ subtest(
             $myint, sub { [$_] },
         );
 
-        _test_arrayref_int_coercion($type);
+        _test_int_to_arrayref_coercion($type);
     }
 );
 
@@ -97,7 +97,7 @@ undef,
     );
 }
 
-sub _test_arrayref_int_coercion {
+sub _test_int_to_arrayref_coercion {
     my $type = shift;
 
     my $sub = compile(

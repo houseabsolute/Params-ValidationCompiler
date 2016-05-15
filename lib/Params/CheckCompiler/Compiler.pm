@@ -36,6 +36,7 @@ has _env => (
 sub subref {
     my $self = shift;
     $self->_compile;
+    local $ENV{EVAL_CLOSURE_PRINT_SOURCE} = 1;
     return eval_closure(
         source => 'sub { ' . ( join "\n", @{ $self->_source } ) . ' };',
         environment => $self->_env,
@@ -94,6 +95,13 @@ sub _add_type_check {
     if ( $type->can('can_be_inlined') && $type->can('inline_assert') ) {
         $self->_add_type_tiny_check( $access, $name, $type );
     }
+
+    # Specio
+    elsif ( $type->can('can_inline_coercion_and_check') ) {
+        $self->_add_specio_check( $access, $name, $type );
+    }
+
+    # Moose
     elsif ( $type->can('can_be_inlined') ) {
         $self->_add_moose_check( $access, $name, $type );
     }
@@ -115,10 +123,11 @@ sub _add_type_tiny_check {
                 "$access = " . $coercion->inline_coercion($access) . ';';
         }
         else {
-            $self->_env->{'%coercions'}{$name} = $coercion->compiled_coercion;
+            $self->_env->{'%tt_coercions'}{$name}
+                = $coercion->compiled_coercion;
             push @{ $self->_source },
                 sprintf(
-                '%s = $coercions{%s}->( %s );',
+                '%s = $tt_coercions{%s}->( %s );',
                 $access, $name, $access,
                 );
         }
@@ -137,6 +146,56 @@ sub _add_type_tiny_check {
     return;
 }
 
+sub _add_specio_check {
+    my $self   = shift;
+    my $access = shift;
+    my $name   = shift;
+    my $type   = shift;
+
+    my $qname = B::perlstring($name);
+
+    if ( $type->can_inline_coercion_and_check ) {
+        my ( $source, $env ) = $type->inline_coercion_and_check($access);
+        push @{ $self->_source }, sprintf( '%s = %s', $access, $source );
+        $self->_env->{$_} = $env->{$_} for keys %{$env};
+    }
+    else {
+        my @coercions = $type->coercions;
+        $self->_env->{'%specio_coercions'}{$name} = \@coercions;
+        for my $i ( 0 .. $#coercions ) {
+            my $c = $coercions[$i];
+            if ( $c->can_be_inlined ) {
+                push @{ $self->_source },
+                    sprintf(
+                    '%s = %s if %s;',
+                    $access,
+                    $c->inline_coercion($access),
+                    $c->from->inline_check($access)
+                    );
+            }
+            else {
+                push @{ $self->_source },
+                    sprintf(
+                    '%s = $specio_coercions{%s}[%s]->coerce(%s) if $specio_coercions{%s}[%s]->from->value_is_valid(%s);',
+                    $access,
+                    $qname,
+                    $i,
+                    $access,
+                    $qname,
+                    $i,
+                    $access
+                    );
+            }
+        }
+
+        push @{ $self->_source },
+            sprintf( '$types{%s}->validate_or_die(%s)', $name, $access );
+        $self->_env->{'%types'}{$name} = $type;
+    }
+
+    return;
+}
+
 sub _add_moose_check {
     my $self   = shift;
     my $access = shift;
@@ -144,10 +203,10 @@ sub _add_moose_check {
     my $type   = shift;
 
     if ( $type->has_coercion ) {
-        $self->_env->{'%coercions'}{$name} = $type->coercion;
+        $self->_env->{'%moose_coercions'}{$name} = $type->coercion;
         push @{ $self->_source },
             sprintf(
-            '%s = $coercions{%s}->coerce( %s );',
+            '%s = $moose_coercions{%s}->coerce( %s );',
             $access, $name, $access,
             );
     }

@@ -30,7 +30,7 @@ subtest(
         my $type = subtype 'ArrayRefInt', as 'ArrayRef[Int]';
         coerce $type => from 'Int' => via { [$_] };
 
-        _test_arrayref_int_coercion($type);
+        _test_int_to_arrayref_coercion($type);
     }
 );
 
@@ -40,7 +40,7 @@ subtest(
         my $type = subtype as 'ArrayRef[MyInt]';
         coerce $type => from 'Int' => via { [$_] };
 
-        _test_arrayref_int_coercion($type);
+        _test_int_to_arrayref_coercion($type);
     }
 );
 
@@ -69,7 +69,7 @@ sub _test_int_type {
     );
 }
 
-sub _test_arrayref_int_coercion {
+sub _test_int_to_arrayref_coercion {
     my $type = shift;
 
     my $sub = compile(
