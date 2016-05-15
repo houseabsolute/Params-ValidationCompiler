@@ -64,10 +64,6 @@ subtest(
 subtest(
     'neither type not coercion can be inlined',
     sub {
-        my $myint = Type::Tiny->new(
-            name       => 'MyInt',
-            constraint => sub {/\A-?[0-9]+\z/},
-        );
         my $type = ( ArrayRef [$myint] )->plus_coercions(
             $myint, sub { [$_] },
         );
