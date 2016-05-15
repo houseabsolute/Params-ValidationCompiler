@@ -3,6 +3,8 @@ package Params::CheckCompiler;
 use strict;
 use warnings;
 
+our $VERSION = '0.01';
+
 use Params::CheckCompiler::Compiler;
 
 use Exporter qw( import );
@@ -18,3 +20,5 @@ sub source_for {
 }
 
 1;
+
+# ABSTRACT: Build an optimized subroutine parameter validator once, use it forever

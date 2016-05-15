@@ -3,6 +3,8 @@ package Params::CheckCompiler::Compiler;
 use strict;
 use warnings;
 
+our $VERSION = '0.01';
+
 use Eval::Closure;
 use Params::CheckCompiler::Exception::Required;
 use Params::CheckCompiler::Exception::Unknown;
