@@ -83,8 +83,9 @@ sub _test_int_type {
         },
     );
 
-    ok(
-        lives { $sub->( foo => 42 ) },
+    is(
+        dies { $sub->( foo => 42 ) },
+undef,
         'lives when foo is an integer'
     );
 
@@ -105,13 +106,15 @@ sub _test_arrayref_int_coercion {
         },
     );
 
-    ok(
-        lives { $sub->( foo => 42 ) },
+    is(
+        dies { $sub->( foo => 42 ) },
+        undef,
         'lives when foo is an integer'
     );
 
-    ok(
-        lives { $sub->( foo => [ 42, 1 ] ) },
+    is(
+        dies { $sub->( foo => [ 42, 1 ] ) },
+        undef,
         'lives when foo is an arrayref of integers'
     );
 
