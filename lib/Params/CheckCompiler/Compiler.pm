@@ -89,6 +89,7 @@ sub _add_type_check {
         unless blessed $type;
 
     push @{ $self->_source }, sprintf( 'if ( exists %s ) {', $access );
+
     # Type::Tiny API
     if ( $type->can('can_be_inlined') && $type->can('inline_assert') ) {
         $self->_add_type_tiny_check( $access, $name, $type );
@@ -168,7 +169,8 @@ if ( !%s ) {
 }
 EOF
 
-    my $check = $type->can_be_inlined
+    my $check
+        = $type->can_be_inlined
         ? $type->_inline_check($access)
         : sprintf( '$types{%s}->check( %s )', $name, $access );
 

@@ -1,3 +1,4 @@
+## no critic (Moose::RequireCleanNamespace)
 use strict;
 use warnings;
 
