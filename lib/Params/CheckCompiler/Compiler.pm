@@ -6,6 +6,7 @@ use warnings;
 use Eval::Closure;
 use Params::CheckCompiler::Exception::Required;
 use Params::CheckCompiler::Exception::Unknown;
+use Params::CheckCompiler::Exception::ValidationFailedForMooseTypeConstraint;
 use Scalar::Util qw( blessed );
 
 use Moo;
@@ -85,10 +86,15 @@ sub _add_type_check {
     die "Passed a type that is not an object for $name: $type"
         unless blessed $type;
 
+    push @{ $self->_source }, sprintf( 'if ( exists %s ) {', $access );
     # Type::Tiny API
-    if ( $type->can('can_be_inlined') ) {
+    if ( $type->can('can_be_inlined') && $type->can('inline_assert') ) {
         $self->_add_type_tiny_check( $access, $name, $type );
     }
+    elsif ( $type->can('can_be_inlined') ) {
+        $self->_add_moose_check( $access, $name, $type );
+    }
+    push @{ $self->_source }, '}';
 
     return;
 }
@@ -124,6 +130,55 @@ sub _add_type_tiny_check {
             sprintf( '$types{%s}->assert_valid( %s );', $name, $access );
         $self->_env->{'%types'}{$name} = $type;
     }
+
+    return;
+}
+
+sub _add_moose_check {
+    my $self   = shift;
+    my $access = shift;
+    my $name   = shift;
+    my $type   = shift;
+
+    if ( $type->has_coercion ) {
+        $self->_env->{'%coercions'}{$name} = $type->coercion;
+        push @{ $self->_source },
+            sprintf(
+            '%s = $coercions{%s}->coerce( %s );',
+            $access, $name, $access,
+            );
+    }
+
+    $self->_env->{'%types'}{$name} = $type;
+
+    my $code = <<'EOF';
+if ( !%s ) {
+    my $type = $types{%s};
+    my $msg  = $type->get_message(%s);
+    die
+        Params::CheckCompiler::Exception::ValidationFailedForMooseTypeConstraint
+        ->new(
+        message   => $msg,
+        parameter => 'The ' . %s . ' parameter',
+        value     => %s,
+        type      => $type,
+        );
+}
+EOF
+
+    my $check = $type->can_be_inlined
+        ? $type->_inline_check($access)
+        : sprintf( '$types{%s}->check( %s )', $name, $access );
+
+    my $qname = B::perlstring($name);
+    push @{ $self->_source }, sprintf(
+        $code,
+        $check,
+        $qname,
+        $access,
+        $qname,
+        $access,
+    );
 
     return;
 }

@@ -2,23 +2,20 @@ use strict;
 use warnings;
 
 use Test2::Bundle::Extended;
-use Test2::Require::Module 'Type::Tiny';
+use Test2::Require::Module 'Moose::Util::TypeConstraints';
 
 use Params::CheckCompiler qw( compile );
-use Types::Standard qw( ArrayRef Int );
+use Moose::Util::TypeConstraints;
 
+my $moose_int = find_type_constraint('Int');
 subtest(
     'type can be inlined',
     sub {
-        _test_int_type(Int);
+        _test_int_type($moose_int);
     }
 );
 
-my $myint = Type::Tiny->new(
-    name       => 'MyInt',
-    constraint => sub {/\A-?[0-9]+\z/},
-);
-
+my $myint = subtype 'MyInt' => as 'Num' => where {/\A-?[0-9]+\z/};
 subtest(
     'type cannot be inlined',
     sub {
@@ -27,35 +24,10 @@ subtest(
 );
 
 subtest(
-    'type and coercion can be inlined',
-    sub {
-        my $type = ( ArrayRef [Int] )->plus_coercions(
-            Int, '[$_]',
-        );
-
-        _test_arrayref_int_coercion($type);
-    }
-);
-
-subtest(
     'type can be inlined but coercion cannot',
     sub {
-        my $type = ( ArrayRef [Int] )->plus_coercions(
-            Int, sub { [$_] },
-        );
-
-        _test_arrayref_int_coercion($type);
-    }
-);
-
-# XXX - if the type cannot be inlined then the coercion reports itself as
-# uninlinable as well, but that could change in the future.
-subtest(
-    'type cannot be inlined but coercion can',
-    sub {
-        my $type = ( ArrayRef [$myint] )->plus_coercions(
-            $myint, '[$_]',
-        );
+        my $type = subtype 'ArrayRefInt', as 'ArrayRef[Int]';
+        coerce $type => from 'Int' => via { [$_] };
 
         _test_arrayref_int_coercion($type);
     }
@@ -64,13 +36,8 @@ subtest(
 subtest(
     'neither type not coercion can be inlined',
     sub {
-        my $myint = Type::Tiny->new(
-            name       => 'MyInt',
-            constraint => sub {/\A-?[0-9]+\z/},
-        );
-        my $type = ( ArrayRef [$myint] )->plus_coercions(
-            $myint, sub { [$_] },
-        );
+        my $type = subtype as 'ArrayRef[MyInt]';
+        coerce $type => from 'Int' => via { [$_] };
 
         _test_arrayref_int_coercion($type);
     }
@@ -92,10 +59,10 @@ sub _test_int_type {
         'lives when foo is an integer'
     );
 
-    my $name = $type->display_name;
+    my $name = $type->name;
     like(
         dies { $sub->( foo => [] ) },
-        qr/\QReference [] did not pass type constraint "$name"/,
+        qr/\QValidation failed for '$name' with value [  ]/,
         'dies when foo is an arrayref'
     );
 }
@@ -119,10 +86,10 @@ sub _test_arrayref_int_coercion {
         'lives when foo is an arrayref of integers'
     );
 
-    my $name = $type->display_name;
+    my $name = $type->name;
     like(
         dies { $sub->( foo => {} ) },
-        qr/\QReference {} did not pass type constraint "$name"/,
+        qr/\QValidation failed for '$name' with value {  }/,
         'dies when foo is a hashref'
     );
 }
