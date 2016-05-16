@@ -62,6 +62,7 @@ sub _compile {
 
     for my $name ( keys %{$params} ) {
         my $spec = $params->{$name};
+        $spec = { optional => !$spec } unless ref $spec;
 
         my $qname  = B::perlstring($name);
         my $access = "\$args{$qname}";

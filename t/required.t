@@ -8,7 +8,7 @@ use Params::CheckCompiler qw( compile );
 {
     my $sub = compile(
         params => {
-            foo => {},
+            foo => 1,
             bar => { optional => 1 },
         },
     );
