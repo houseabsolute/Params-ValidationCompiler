@@ -9,7 +9,7 @@ use Eval::Closure;
 use Params::CheckCompiler::Exception::Required;
 use Params::CheckCompiler::Exception::Unknown;
 use Params::CheckCompiler::Exception::ValidationFailedForMooseTypeConstraint;
-use Scalar::Util qw( blessed );
+use Scalar::Util qw( blessed looks_like_number reftype );
 
 use Moo;
 
@@ -68,7 +68,10 @@ sub _compile {
         my $access = "\$args{$qname}";
 
         $self->_add_check_for_required( $access, $name )
-            unless $spec->{optional};
+            unless $spec->{optional} || exists $spec->{default};
+
+        $self->_add_default_assignment( $access, $name, $spec->{default} )
+            if exists $spec->{default};
 
         $self->_add_type_check( $access, $name, $spec->{type} )
             if $spec->{type};
@@ -76,6 +79,61 @@ sub _compile {
 
     $self->_add_check_for_unknown
         unless $self->allow_unknown;
+
+    push @{ $self->_source }, 'return %args;';
+
+    return;
+}
+
+sub _add_check_for_required {
+    my $self   = shift;
+    my $access = shift;
+    my $name   = shift;
+
+    my $qname = B::perlstring($name);
+    push @{ $self->_source }, sprintf( <<'EOF', $access, ($qname) x 2 );
+exists %s
+    or Params::CheckCompiler::Exception::Required->throw(
+    message   => %s . ' is a required parameter',
+    parameter => %s,
+    );
+EOF
+
+    return;
+}
+
+sub _add_default_assignment {
+    my $self    = shift;
+    my $access  = shift;
+    my $name    = shift;
+    my $default = shift;
+
+    die 'Default must be either a plain scalar or a subroutine reference'
+        if ref $default && reftype($default) ne 'CODE';
+
+    my $qname = B::perlstring($name);
+    push @{ $self->_source }, "unless ( exists \$args{$qname} ) {";
+
+    if ( ref $default ) {
+        push @{ $self->_source }, "$access = \$defaults{$qname}->();";
+        $self->_env->{'%defaults'}{$name} = $default;
+    }
+    else {
+        if ( defined $default ) {
+            if ( looks_like_number($default) ) {
+                push @{ $self->_source }, "$access = $default;";
+            }
+            else {
+                push @{ $self->_source },
+                    "$access = " . B::perlstring($default) . ';';
+            }
+        }
+        else {
+            push @{ $self->_source }, "$access = undef;";
+        }
+    }
+
+    push @{ $self->_source }, '}';
 
     return;
 }
@@ -242,23 +300,6 @@ EOF
         $qname,
         $access,
     );
-
-    return;
-}
-
-sub _add_check_for_required {
-    my $self   = shift;
-    my $access = shift;
-    my $name   = shift;
-
-    my $qname = B::perlstring($name);
-    push @{ $self->_source }, sprintf( <<'EOF', $access, ($qname) x 2 );
-exists %s
-    or Params::CheckCompiler::Exception::Required->throw(
-    message   => %s . ' is a required parameter',
-    parameter => %s,
-    );
-EOF
 
     return;
 }
