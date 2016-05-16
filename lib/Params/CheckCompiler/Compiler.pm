@@ -36,7 +36,6 @@ has _env => (
 sub subref {
     my $self = shift;
     $self->_compile;
-    local $ENV{EVAL_CLOSURE_PRINT_SOURCE} = 1;
     return eval_closure(
         source => 'sub { ' . ( join "\n", @{ $self->_source } ) . ' };',
         environment => $self->_env,
