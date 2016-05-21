@@ -85,7 +85,7 @@ sub _test_int_type {
 
     is(
         dies { $sub->( foo => 42 ) },
-undef,
+        undef,
         'lives when foo is an integer'
     );
 
