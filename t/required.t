@@ -4,22 +4,28 @@ use warnings;
 use Test2::Bundle::Extended;
 
 use Params::CheckCompiler qw( compile );
+use Types::Standard qw( Int );
 
 {
     my $sub = compile(
         params => {
             foo => 1,
-            bar => { optional => 1 },
+            bar => {
+                type     => Int,
+                optional => 1,
+            },
         },
     );
 
-    ok(
-        lives { $sub->( foo => 42 ) },
+    is(
+        dies { $sub->( foo => 42 ) },
+        undef,
         'lives when given foo param but no bar'
     );
 
-    ok(
-        lives { $sub->( foo => 42, bar => 42 ) },
+    is(
+        dies { $sub->( foo => 42, bar => 42 ) },
+        undef,
         'lives when given foo and bar params'
     );
 

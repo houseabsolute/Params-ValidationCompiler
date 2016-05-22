@@ -73,7 +73,7 @@ sub _compile {
         $self->_add_default_assignment( $access, $name, $spec->{default} )
             if exists $spec->{default};
 
-        $self->_add_type_check( $access, $name, $spec->{type} )
+        $self->_add_type_check( $access, $name, $spec )
             if $spec->{type};
     }
 
@@ -142,12 +142,14 @@ sub _add_type_check {
     my $self   = shift;
     my $access = shift;
     my $name   = shift;
-    my $type   = shift;
+    my $spec   = shift;
 
+    my $type = $spec->{type};
     die "Passed a type that is not an object for $name: $type"
         unless blessed $type;
 
-    push @{ $self->_source }, sprintf( 'if ( exists %s ) {', $access );
+    push @{ $self->_source }, sprintf( 'if ( exists %s ) {', $access )
+        if $spec->{optional};
 
     # Type::Tiny API
     if ( $type->can('can_be_inlined') && $type->can('inline_assert') ) {
@@ -163,7 +165,9 @@ sub _add_type_check {
     elsif ( $type->can('can_be_inlined') ) {
         $self->_add_moose_check( $access, $name, $type );
     }
-    push @{ $self->_source }, '}';
+
+    push @{ $self->_source }, '}'
+        if $spec->{optional};
 
     return;
 }
