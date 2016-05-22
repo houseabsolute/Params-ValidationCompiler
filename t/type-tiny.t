@@ -2,7 +2,6 @@ use strict;
 use warnings;
 
 use Test2::Bundle::Extended;
-use Test2::Require::Module 'Type::Tiny';
 
 use Params::CheckCompiler qw( compile );
 use Types::Standard qw( ArrayRef Int );
