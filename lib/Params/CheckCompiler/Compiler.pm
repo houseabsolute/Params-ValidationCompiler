@@ -151,14 +151,14 @@ sub _add_type_check {
     push @{ $self->_source }, sprintf( 'if ( exists %s ) {', $access )
         if $spec->{optional};
 
-    # Type::Tiny API
-    if ( $type->can('can_be_inlined') && $type->can('inline_assert') ) {
-        $self->_add_type_tiny_check( $access, $name, $type );
+    # Specio
+    if ( $type->can('can_inline_coercion_and_check') ) {
+        $self->_add_specio_check( $access, $name, $type );
     }
 
-    # Specio
-    elsif ( $type->can('can_inline_coercion_and_check') ) {
-        $self->_add_specio_check( $access, $name, $type );
+    # Type::Tiny
+    elsif ( $type->can('inline_assert') ) {
+        $self->_add_type_tiny_check( $access, $name, $type );
     }
 
     # Moose
@@ -217,9 +217,16 @@ sub _add_specio_check {
     my $qname = B::perlstring($name);
 
     if ( $type->can_inline_coercion_and_check ) {
-        my ( $source, $env ) = $type->inline_coercion_and_check($access);
-        push @{ $self->_source }, sprintf( '%s = %s', $access, $source );
-        $self->_env->{$_} = $env->{$_} for keys %{$env};
+        if ( $type->has_coercions ) {
+            my ( $source, $env ) = $type->inline_coercion_and_check($access);
+            push @{ $self->_source }, sprintf( '%s = %s;', $access, $source );
+            $self->_env->{$_} = $env->{$_} for keys %{$env};
+        }
+        else {
+            my ( $source, $env ) = $type->inline_assert($access);
+            push @{ $self->_source }, $source . ';';
+            $self->_env->{$_} = $env->{$_} for keys %{$env};
+        }
     }
     else {
         my @coercions = $type->coercions;
@@ -251,7 +258,7 @@ sub _add_specio_check {
         }
 
         push @{ $self->_source },
-            sprintf( '$types{%s}->validate_or_die(%s)', $name, $access );
+            sprintf( '$types{%s}->validate_or_die(%s);', $name, $access );
         $self->_env->{'%types'}{$name} = $type;
     }
 
