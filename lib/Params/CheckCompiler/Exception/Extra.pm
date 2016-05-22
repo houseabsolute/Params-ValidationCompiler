@@ -1,4 +1,4 @@
-package Params::CheckCompiler::Exception::Unknown;
+package Params::CheckCompiler::Exception::Extra;
 
 use strict;
 use warnings;

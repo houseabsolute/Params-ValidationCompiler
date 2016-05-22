@@ -7,7 +7,7 @@ our $VERSION = '0.01';
 
 use Eval::Closure;
 use Params::CheckCompiler::Exception::Required;
-use Params::CheckCompiler::Exception::Unknown;
+use Params::CheckCompiler::Exception::Extra;
 use Params::CheckCompiler::Exception::ValidationFailedForMooseTypeConstraint;
 use Scalar::Util qw( blessed looks_like_number reftype );
 
@@ -18,7 +18,7 @@ has params => (
     required => 1,
 );
 
-has allow_unknown => (
+has allow_extra => (
     is      => 'ro',
     default => 0,
 );
@@ -77,8 +77,8 @@ sub _compile {
             if $spec->{type};
     }
 
-    $self->_add_check_for_unknown
-        unless $self->allow_unknown;
+    $self->_add_check_for_extra
+        unless $self->allow_extra;
 
     push @{ $self->_source }, 'return %args;';
 
@@ -304,17 +304,17 @@ EOF
     return;
 }
 
-sub _add_check_for_unknown {
+sub _add_check_for_extra {
     my $self = shift;
 
     $self->_env->{'%known'} = { map { $_ => 1 } keys %{ $self->params } };
     push @{ $self->_source }, <<'EOF';
-my @unknown = grep { ! $known{$_} } keys %args;
-if ( @unknown ) {
-    my $u = join ', ', sort @unknown;
-    Params::CheckCompiler::Exception::Unknown->throw(
-        message    => "found unknown parameters: [$u]",
-        parameters => \@unknown,
+my @extra = grep { ! $known{$_} } keys %args;
+if ( @extra ) {
+    my $u = join ', ', sort @extra;
+    Params::CheckCompiler::Exception::Extra->throw(
+        message    => "found extra parameters: [$u]",
+        parameters => \@extra,
     );
 }
 EOF

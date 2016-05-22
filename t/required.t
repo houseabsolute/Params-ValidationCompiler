@@ -28,18 +28,6 @@ use Params::CheckCompiler qw( compile );
         qr/foo is a required parameter/,
         'dies when not given foo param'
     );
-
-    like(
-        dies { $sub->( foo => 42, extra => [] ) },
-        qr/found unknown parameters: \[extra\]/,
-        'dies when given one unknown parameter'
-    );
-
-    like(
-        dies { $sub->( foo => 42, extra => [], more => 0 ) },
-        qr/found unknown parameters: \[extra, more\]/,
-        'dies when given two unknown parameters'
-    );
 }
 
 done_testing();
