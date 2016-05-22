@@ -6,8 +6,9 @@ use warnings;
 our $VERSION = '0.01';
 
 use Eval::Closure;
-use Params::CheckCompiler::Exception::Required;
+use Params::CheckCompiler::Exception::BadArguments;
 use Params::CheckCompiler::Exception::Extra;
+use Params::CheckCompiler::Exception::Required;
 use Params::CheckCompiler::Exception::ValidationFailedForMooseTypeConstraint;
 use Scalar::Util qw( blessed looks_like_number reftype );
 
@@ -35,6 +36,7 @@ has _env => (
 
 sub subref {
     my $self = shift;
+
     $self->_compile;
     return eval_closure(
         source => 'sub { ' . ( join "\n", @{ $self->_source } ) . ' };',
@@ -44,8 +46,8 @@ sub subref {
 
 sub source {
     my $self = shift;
-    $self->_compile;
 
+    $self->_compile;
     return (
         ( join "\n", @{ $self->_source } ),
         $self->_env,
@@ -55,8 +57,7 @@ sub source {
 sub _compile {
     my $self = shift;
 
-    push @{ $self->_source },
-        q<my %args = @_ == 1 && Scalar::Util::reftype( $_[0] ) eq 'HASH' ? %{ $_[0] } : @_;>;
+    push @{ $self->_source }, $self->_set_named_args_hash;
 
     my $params = $self->params;
 
@@ -81,6 +82,46 @@ sub _compile {
         unless $self->allow_extra;
 
     push @{ $self->_source }, 'return %args;';
+
+    return;
+}
+
+sub _set_named_args_hash {
+    my $self = shift;
+
+    push @{ $self->_source }, <<'EOF';
+my %args;
+if ( @_ % 2 == 0 ) {
+    %args = @_;
+}
+elsif ( @_ == 1 ) {
+    if ( ref $_[0] ) {
+        if ( Scalar::Util::reftype( $_[0] ) eq 'HASH' ) {
+            %args = %{ $_[0] };
+        }
+        else {
+            Params::CheckCompiler::Exception::BadArguments->throw(
+                message =>
+                    'Expected a hash or hash reference but got a single '
+                    . ( Scalar::Util::reftype( $_[0] ) )
+                    . ' reference argument',
+            );
+        }
+    }
+    else {
+        Params::CheckCompiler::Exception::BadArguments->throw(
+            message =>
+                'Expected a hash or hash reference but got a single non-reference argument',
+        );
+    }
+}
+else {
+    Params::CheckCompiler::Exception::BadArguments->throw(
+        message =>
+            'Expected a hash or hash reference but got an odd number of arguments',
+    );
+}
+EOF
 
     return;
 }
