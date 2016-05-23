@@ -2,6 +2,7 @@ use strict;
 use warnings;
 
 use Test2::Bundle::Extended;
+use Test2::Plugin::NoWarnings;
 
 use Params::CheckCompiler qw( compile );
 use Types::Standard qw( Int );
