@@ -1,3 +1,4 @@
+## no critic (Moose::RequireCleanNamespace, ErrorHandling::RequireCheckingReturnValueOfEval)
 use strict;
 use warnings;
 
@@ -251,7 +252,7 @@ cmpthese(
     }
 );
 
-print "\n";
+print "\n" or die $!;
 
 cmpthese(
     50000, {
