@@ -375,3 +375,9 @@ EOF
 }
 
 1;
+
+# ABSTRACT: Object that implements the check subroutine compilation
+
+__END__
+
+=for Pod::Coverage .*

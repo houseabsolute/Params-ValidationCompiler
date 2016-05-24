@@ -15,3 +15,9 @@ has parameter => (
 );
 
 1;
+
+# ABSTRACT: Exception thrown when a required parameter is not passed
+
+__END__
+
+=for Pod::Coverage .*

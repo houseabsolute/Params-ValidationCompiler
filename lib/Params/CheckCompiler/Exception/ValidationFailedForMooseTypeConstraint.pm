@@ -30,9 +30,6 @@ has type => (
 
 __END__
 
-=head1 SYNOPSIS
-
-
 =head1 DESCRIPTION
 
 This class provides information about type constraint failures.
@@ -57,4 +54,3 @@ This is the type constraint object that did not accept the value.
 =head1 STRINGIFICATION
 
 This object stringifies to a reasonable error message.
-

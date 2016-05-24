@@ -15,3 +15,9 @@ has parameters => (
 );
 
 1;
+
+# ABSTRACT: Exception thrown when @_ contains unexpected extra arguments
+
+__END__
+
+=for Pod::Coverage .*
