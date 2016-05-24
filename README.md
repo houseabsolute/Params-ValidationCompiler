@@ -6,6 +6,90 @@ Params::CheckCompiler - Build an optimized subroutine parameter validator once, 
 
 version 0.01
 
+# SYNOPSIS
+
+    use MooseX::Types::Moose qw( Int Str );
+    use Params::CheckCompiler qw( compile );
+
+    {
+        my $check = compile(
+            params => {
+                foo => { type => Int },
+                bar => {
+                    type     => Str,
+                    optional => 1,
+                },
+                baz => {
+                    type    => Int,
+                    default => 42,
+                },
+            },
+        );
+
+        sub do_something {
+            my %args = $check->(@_);
+        }
+    }
+
+# DESCRIPTION
+
+**This is very alpha. The module name could change. Everything could
+change. You have been warned.**
+
+Create a customized, optimized, non-lobotomized, uncompromised, and thoroughly
+specialized parameter checking subroutine.
+
+# EXPORTS
+
+This module has two options exports, `compile` and `source_for`. Both of
+these subs accept the same options:
+
+- params
+
+    A hashref containing parameter names and a spec for that parameter. The spec
+    can contain either a boolean or hashref. If the spec is a boolean, this
+    indicates required (true) or optional (false).
+
+    The hashref accepts the following keys:
+
+    - type
+
+        A type object. This can be a [Moose](https://metacpan.org/pod/Moose) type (from [Moose](https://metacpan.org/pod/Moose) or
+        [MooseX::Types](https://metacpan.org/pod/MooseX::Types)), a [Type::Tiny](https://metacpan.org/pod/Type::Tiny) type, or a [Specio](https://metacpan.org/pod/Specio) type.
+
+        If the type has coercions, those will always be used.
+
+    - default
+
+        This can either be a simple (non-reference) scalar or a subroutine
+        reference. The sub ref will be called without any arguments (for now).
+
+    - optional
+
+        A boolean indicating whether or not the parameter is optional. By default,
+        parameters are required unless you provide a default.
+
+- allow\_extra
+
+    If this is true, then the generated subroutine accepts additional arguments
+    not specified in `params`. By default, extra arguments cause an exception.
+
+## compile(...)
+
+This returns a subroutine that implements the specific parameter
+checking. Pass this the arguments in `@_` and it will return a hash of
+parameters or throw an exception. The compiled subroutine accepts either a
+hash or a single hashref.
+
+For now, you must shift off the invocant yourself.
+
+## source\_for(...)
+
+This returns a two element list. The first is a string containing the source
+code for the generated sub. The second is a hashref of "environment" variables
+to be used when generating the subroutine. These are the arguments that are
+passed to [Eval::Closure](https://metacpan.org/pod/Eval::Closure).
+
 # SUPPORT
 
 Bugs may be submitted through [the RT bug tracker](http://rt.cpan.org/Public/Dist/Display.html?Name=Params-CheckCompiler)
@@ -32,7 +116,7 @@ button at [http://www.urth.org/~autarch/fs-donation.html](http://www.urth.org/~a
 
 # AUTHOR
 
-Dave Rolsky &lt;autarch@urth.org>
+Dave Rolsky <autarch@urth.org>
 
 # COPYRIGHT AND LICENCE
 
