@@ -3,7 +3,7 @@ package Params::CheckCompiler::Exception::ValidationFailedForMooseTypeConstraint
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use Moo;
 

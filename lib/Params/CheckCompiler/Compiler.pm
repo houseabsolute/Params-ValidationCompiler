@@ -3,7 +3,7 @@ package Params::CheckCompiler::Compiler;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use Eval::Closure;
 use Params::CheckCompiler::Exception::BadArguments;
