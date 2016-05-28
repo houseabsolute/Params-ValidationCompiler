@@ -27,7 +27,7 @@ __END__
 
 =head1 SYNOPSIS
 
-    use MooseX::Types::Moose qw( Int Str );
+    use Types::Standard qw( Int Str );
     use Params::CheckCompiler qw( compile );
 
     {
