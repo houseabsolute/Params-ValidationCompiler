@@ -4,6 +4,8 @@
 
 - Add support for type checking extra parameters.
 
+- Renamed allow_extra to slurpy.
+
 
 0.01     2016-05-24
 
