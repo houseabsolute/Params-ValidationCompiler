@@ -22,7 +22,7 @@ has params => (
     required => 1,
 );
 
-has allow_extra => (
+has slurpy => (
     is      => 'ro',
     default => 0,
 );
@@ -92,9 +92,9 @@ sub _compile_named_args_check {
             if $spec->{type};
     }
 
-    if ( $self->allow_extra ) {
-        $self->_add_check_for_extra_hash_param_types( $self->allow_extra )
-            if ref $self->allow_extra;
+    if ( $self->slurpy ) {
+        $self->_add_check_for_extra_hash_param_types( $self->slurpy )
+            if ref $self->slurpy;
     }
     else {
         $self->_add_check_for_extra_hash_params;
@@ -217,7 +217,7 @@ sub _compile_positional_args_check {
         if $first_optional_idx != 0;
 
     $self->_add_check_for_extra_positional_params( scalar @specs )
-        unless $self->allow_extra;
+        unless $self->slurpy;
 
     for my $i ( 0 .. $#specs ) {
         my $spec = $specs[$i];
@@ -232,10 +232,10 @@ sub _compile_positional_args_check {
             if $spec->{type};
     }
 
-    if ( ref $self->allow_extra ) {
+    if ( ref $self->slurpy ) {
         $self->_add_check_for_extra_positional_param_types(
             scalar @specs,
-            $self->allow_extra,
+            $self->slurpy,
         );
     }
 

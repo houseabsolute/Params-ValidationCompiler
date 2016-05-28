@@ -19,7 +19,7 @@ use Types::Standard qw( Int );
     );
 
     is(
-        dies { $sub->( 42 ) },
+        dies { $sub->(42) },
         undef,
         'lives when given 1st param but no 2nd'
     );

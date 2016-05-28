@@ -33,13 +33,13 @@ use Types::Standard qw( Int );
         params => {
             foo => 1,
         },
-        allow_extra => 1,
+        slurpy => 1,
     );
 
     like(
         dies { $sub->() },
         qr/foo is a required parameter/,
-        'foo is still required when allow_extra is true'
+        'foo is still required when slurpy is true'
     );
 
     is(
@@ -62,13 +62,13 @@ use Types::Standard qw( Int );
         params => {
             foo => 1,
         },
-        allow_extra => Int,
+        slurpy => Int,
     );
 
     like(
         dies { $sub->() },
         qr/foo is a required parameter/,
-        'foo is still required when allow_extra is a type constraint'
+        'foo is still required when slurpy is a type constraint'
     );
 
     is(

@@ -101,7 +101,7 @@ parameters are required unless you provide a default.
 
 =back
 
-=item * allow_extra
+=item * slurpy
 
 If this is a simple true value, then the generated subroutine accepts
 additional arguments not specified in C<params>. By default, extra arguments
