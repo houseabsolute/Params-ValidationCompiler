@@ -67,9 +67,16 @@ these subs accept the same options:
 
 =item * params
 
-A hashref containing parameter names and a spec for that parameter. The spec
-can contain either a boolean or hashref. If the spec is a boolean, this
-indicates required (true) or optional (false).
+An arrayref or hashref containing a parameter specification.
+
+If you pass an arrayref, the check will expect positional params. Each member
+of the arrayref represents a single parameter to validate.
+
+If you pass a hashref then it will expect named params. For hashrefs, the
+parameters names are the keys and the specs are the values.
+
+The spec can contain either a boolean or hashref. If the spec is a boolean,
+this indicates required (true) or optional (false).
 
 The hashref accepts the following keys:
 
@@ -96,8 +103,12 @@ parameters are required unless you provide a default.
 
 =item * allow_extra
 
-If this is true, then the generated subroutine accepts additional arguments
-not specified in C<params>. By default, extra arguments cause an exception.
+If this is a simple true value, then the generated subroutine accepts
+additional arguments not specified in C<params>. By default, extra arguments
+cause an exception.
+
+You can also pass a type constraint here, in which case all extra arguments
+must be values of the specified type.
 
 =back
 

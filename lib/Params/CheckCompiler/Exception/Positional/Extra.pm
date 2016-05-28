@@ -1,4 +1,4 @@
-package Params::CheckCompiler::Exception::Extra;
+package Params::CheckCompiler::Exception::Positional::Extra;
 
 use strict;
 use warnings;
@@ -9,7 +9,12 @@ use Moo;
 
 extends 'Throwable::Error';
 
-has parameters => (
+has maximum => (
+    is       => 'ro',
+    required => 1,
+);
+
+has got => (
     is       => 'ro',
     required => 1,
 );

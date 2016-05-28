@@ -6,9 +6,12 @@ use warnings;
 our $VERSION = '0.02';
 
 use Eval::Closure;
+use List::SomeUtils qw( first_index );
 use Params::CheckCompiler::Exception::BadArguments;
-use Params::CheckCompiler::Exception::Extra;
-use Params::CheckCompiler::Exception::Required;
+use Params::CheckCompiler::Exception::Named::Extra;
+use Params::CheckCompiler::Exception::Named::Required;
+use Params::CheckCompiler::Exception::Positional::Extra;
+use Params::CheckCompiler::Exception::Positional::Required;
 use Params::CheckCompiler::Exception::ValidationFailedForMooseTypeConstraint;
 use Scalar::Util qw( blessed looks_like_number reftype );
 
@@ -57,6 +60,17 @@ sub source {
 sub _compile {
     my $self = shift;
 
+    if ( ref $self->params eq 'HASH' ) {
+        $self->_compile_named_args_check;
+    }
+    elsif ( ref $self->params eq 'ARRAY' ) {
+        $self->_compile_positional_args_check;
+    }
+}
+
+sub _compile_named_args_check {
+    my $self = shift;
+
     push @{ $self->_source }, $self->_set_named_args_hash;
 
     my $params = $self->params;
@@ -68,7 +82,7 @@ sub _compile {
         my $qname  = B::perlstring($name);
         my $access = "\$args{$qname}";
 
-        $self->_add_check_for_required( $access, $name )
+        $self->_add_check_for_required_named_param( $access, $name )
             unless $spec->{optional} || exists $spec->{default};
 
         $self->_add_default_assignment( $access, $name, $spec->{default} )
@@ -78,8 +92,13 @@ sub _compile {
             if $spec->{type};
     }
 
-    $self->_add_check_for_extra
-        unless $self->allow_extra;
+    if ( $self->allow_extra ) {
+        $self->_add_check_for_extra_hash_param_types( $self->allow_extra )
+            if ref $self->allow_extra;
+    }
+    else {
+        $self->_add_check_for_extra_hash_params;
+    }
 
     push @{ $self->_source }, 'return %args;';
 
@@ -126,7 +145,7 @@ EOF
     return;
 }
 
-sub _add_check_for_required {
+sub _add_check_for_required_named_param {
     my $self   = shift;
     my $access = shift;
     my $name   = shift;
@@ -134,10 +153,175 @@ sub _add_check_for_required {
     my $qname = B::perlstring($name);
     push @{ $self->_source }, sprintf( <<'EOF', $access, ($qname) x 2 );
 exists %s
-    or Params::CheckCompiler::Exception::Required->throw(
+    or Params::CheckCompiler::Exception::Named::Required->throw(
     message   => %s . ' is a required parameter',
     parameter => %s,
     );
+EOF
+
+    return;
+}
+
+sub _add_check_for_extra_hash_param_types {
+    my $self = shift;
+    my $type = shift;
+
+    $self->_env->{'%known'} = { map { $_ => 1 } keys %{ $self->params } };
+
+    # We need to set the name argument to something that won't conflict with
+    # names someone would actually use for a parameter.
+    my $check = join q{}, $self->_type_check(
+        '$args{$key}',
+        '__PCC extra parameters__',
+        $type,
+    );
+    push @{ $self->_source }, sprintf( <<'EOF', $check );
+for my $key ( grep { !$known{$_} } keys %%args ) {
+    %s;
+}
+EOF
+
+    return;
+}
+
+sub _add_check_for_extra_hash_params {
+    my $self = shift;
+
+    $self->_env->{'%known'} = { map { $_ => 1 } keys %{ $self->params } };
+    push @{ $self->_source }, <<'EOF';
+my @extra = grep { ! $known{$_} } keys %args;
+if ( @extra ) {
+    my $u = join ', ', sort @extra;
+    Params::CheckCompiler::Exception::Named::Extra->throw(
+        message    => "found extra parameters: [$u]",
+        parameters => \@extra,
+    );
+}
+EOF
+
+    return;
+}
+
+sub _compile_positional_args_check {
+    my $self = shift;
+
+    my @specs = $self->_munge_and_check_positional_params;
+
+    my $first_optional_idx = first_index { $_->{optional} } @specs;
+
+    # If optional params start anywhere after the first parameter spec then we
+    # must require at least one param. If there are no optional params then
+    # they're all required.
+    $self->_add_check_for_required_positional_params(
+        $first_optional_idx == -1 ? ( scalar @specs ) : $first_optional_idx )
+        if $first_optional_idx != 0;
+
+    $self->_add_check_for_extra_positional_params( scalar @specs )
+        unless $self->allow_extra;
+
+    for my $i ( 0 .. $#specs ) {
+        my $spec = $specs[$i];
+
+        my $name   = "Parameter $i";
+        my $access = "\$_[$i]";
+
+        $self->_add_default_assignment( $access, $name, $spec->{default} )
+            if exists $spec->{default};
+
+        $self->_add_type_check( $access, $name, $spec )
+            if $spec->{type};
+    }
+
+    if ( ref $self->allow_extra ) {
+        $self->_add_check_for_extra_positional_param_types(
+            scalar @specs,
+            $self->allow_extra,
+        );
+    }
+
+    push @{ $self->_source }, 'return @_;';
+
+    return;
+}
+
+sub _munge_and_check_positional_params {
+    my $self = shift;
+
+    my @specs;
+    my $in_optional = 0;
+
+    for my $spec ( @{ $self->params } ) {
+        $spec = ref $spec ? $spec : { optional => !$spec };
+        if ( $spec->{optional} ) {
+            $in_optional = 1;
+        }
+        elsif ($in_optional) {
+            die
+                'Parameter list contains an optional parameter followed by a required parameter.';
+        }
+
+        push @specs, $spec;
+    }
+
+    return @specs;
+}
+
+sub _add_check_for_required_positional_params {
+    my $self = shift;
+    my $min  = shift;
+
+    push @{ $self->_source }, sprintf( <<'EOF', ($min) x 3 );
+if ( @_ < %d ) {
+    my $got = scalar @_;
+    my $got_n = @_ == 1 ? 'parameter' : 'parameters';
+    Params::CheckCompiler::Exception::Positional::Required->throw(
+        message => "got $got $got_n but expected at least %d",
+        minimum => %d,
+        got     => scalar @_,
+    );
+}
+EOF
+
+    return;
+}
+
+sub _add_check_for_extra_positional_param_types {
+    my $self = shift;
+    my $max  = shift;
+    my $type = shift;
+
+    # We need to set the name argument to something that won't conflict with
+    # names someone would actually use for a parameter.
+    my $check = join q{}, $self->_type_check(
+        '$_[$i]',
+        '__PCC extra parameters__',
+        $type,
+    );
+    push @{ $self->_source }, sprintf( <<'EOF', $max, $max, $check );
+if ( @_ > %d ) {
+    for my $i ( %d .. $#_ ) {
+        %s;
+    }
+}
+EOF
+
+    return;
+}
+
+sub _add_check_for_extra_positional_params {
+    my $self = shift;
+    my $max  = shift;
+
+    push @{ $self->_source }, sprintf( <<'EOF', ($max) x 3 );
+if ( @_ > %d ) {
+    my $extra = @_ - %d;
+    my $extra_n = $extra == 1 ? 'parameter' : 'parameters';
+    Params::CheckCompiler::Exception::Positional::Extra->throw(
+        message => "got $extra extra $extra_n",
+        maximum => %d,
+        got     => scalar @_,
+    );
+}
 EOF
 
     return;
@@ -192,25 +376,33 @@ sub _add_type_check {
     push @{ $self->_source }, sprintf( 'if ( exists %s ) {', $access )
         if $spec->{optional};
 
-    # Specio
-    if ( $type->can('can_inline_coercion_and_check') ) {
-        $self->_add_specio_check( $access, $name, $type );
-    }
-
-    # Type::Tiny
-    elsif ( $type->can('inline_assert') ) {
-        $self->_add_type_tiny_check( $access, $name, $type );
-    }
-
-    # Moose
-    elsif ( $type->can('can_be_inlined') ) {
-        $self->_add_moose_check( $access, $name, $type );
-    }
+    push @{ $self->_source },
+        $self->_type_check( $access, $name, $spec->{type} );
 
     push @{ $self->_source }, '}'
         if $spec->{optional};
 
     return;
+}
+
+sub _type_check {
+    my $self   = shift;
+    my $access = shift;
+    my $name   = shift;
+    my $type   = shift;
+
+    # Specio
+    return $type->can('can_inline_coercion_and_check')
+        ? $self->_add_specio_check( $access, $name, $type )
+
+        # Type::Tiny
+        : $type->can('inline_assert')
+        ? $self->_add_type_tiny_check( $access, $name, $type )
+
+        # Moose
+        : $type->can('can_be_inlined')
+        ? $self->_add_moose_check( $access, $name, $type )
+        : die 'Unknown type object ' . ref $type;
 }
 
 sub _add_type_tiny_check {
@@ -219,16 +411,17 @@ sub _add_type_tiny_check {
     my $name   = shift;
     my $type   = shift;
 
+    my @source;
     if ( $type->has_coercion ) {
         my $coercion = $type->coercion;
         if ( $coercion->can_be_inlined ) {
-            push @{ $self->_source },
+            push @source,
                 "$access = " . $coercion->inline_coercion($access) . ';';
         }
         else {
             $self->_env->{'%tt_coercions'}{$name}
                 = $coercion->compiled_coercion;
-            push @{ $self->_source },
+            push @source,
                 sprintf(
                 '%s = $tt_coercions{%s}->( %s );',
                 $access, $name, $access,
@@ -237,16 +430,16 @@ sub _add_type_tiny_check {
     }
 
     if ( $type->can_be_inlined ) {
-        push @{ $self->_source },
+        push @source,
             $type->inline_assert($access);
     }
     else {
-        push @{ $self->_source },
+        push @source,
             sprintf( '$types{%s}->assert_valid( %s );', $name, $access );
         $self->_env->{'%types'}{$name} = $type;
     }
 
-    return;
+    return @source;
 }
 
 sub _add_specio_check {
@@ -257,15 +450,17 @@ sub _add_specio_check {
 
     my $qname = B::perlstring($name);
 
+    my @source;
+
     if ( $type->can_inline_coercion_and_check ) {
         if ( $type->has_coercions ) {
             my ( $source, $env ) = $type->inline_coercion_and_check($access);
-            push @{ $self->_source }, sprintf( '%s = %s;', $access, $source );
+            push @source, sprintf( '%s = %s;', $access, $source );
             $self->_env->{$_} = $env->{$_} for keys %{$env};
         }
         else {
             my ( $source, $env ) = $type->inline_assert($access);
-            push @{ $self->_source }, $source . ';';
+            push @source, $source . ';';
             $self->_env->{$_} = $env->{$_} for keys %{$env};
         }
     }
@@ -275,7 +470,7 @@ sub _add_specio_check {
         for my $i ( 0 .. $#coercions ) {
             my $c = $coercions[$i];
             if ( $c->can_be_inlined ) {
-                push @{ $self->_source },
+                push @source,
                     sprintf(
                     '%s = %s if %s;',
                     $access,
@@ -284,7 +479,7 @@ sub _add_specio_check {
                     );
             }
             else {
-                push @{ $self->_source },
+                push @source,
                     sprintf(
                     '%s = $specio_coercions{%s}[%s]->coerce(%s) if $specio_coercions{%s}[%s]->from->value_is_valid(%s);',
                     $access,
@@ -298,12 +493,12 @@ sub _add_specio_check {
             }
         }
 
-        push @{ $self->_source },
+        push @source,
             sprintf( '$types{%s}->validate_or_die(%s);', $name, $access );
         $self->_env->{'%types'}{$name} = $type;
     }
 
-    return;
+    return @source;
 }
 
 sub _add_moose_check {
@@ -312,9 +507,11 @@ sub _add_moose_check {
     my $name   = shift;
     my $type   = shift;
 
+    my @source;
+
     if ( $type->has_coercion ) {
         $self->_env->{'%moose_coercions'}{$name} = $type->coercion;
-        push @{ $self->_source },
+        push @source,
             sprintf(
             '%s = $moose_coercions{%s}->coerce( %s );',
             $access, $name, $access,
@@ -344,7 +541,7 @@ EOF
         : sprintf( '$types{%s}->check( %s )', $name, $access );
 
     my $qname = B::perlstring($name);
-    push @{ $self->_source }, sprintf(
+    push @source, sprintf(
         $code,
         $check,
         $qname,
@@ -353,25 +550,7 @@ EOF
         $access,
     );
 
-    return;
-}
-
-sub _add_check_for_extra {
-    my $self = shift;
-
-    $self->_env->{'%known'} = { map { $_ => 1 } keys %{ $self->params } };
-    push @{ $self->_source }, <<'EOF';
-my @extra = grep { ! $known{$_} } keys %args;
-if ( @extra ) {
-    my $u = join ', ', sort @extra;
-    Params::CheckCompiler::Exception::Extra->throw(
-        message    => "found extra parameters: [$u]",
-        parameters => \@extra,
-    );
-}
-EOF
-
-    return;
+    return @source;
 }
 
 1;

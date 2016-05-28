@@ -1,4 +1,4 @@
-package Params::CheckCompiler::Exception::Required;
+package Params::CheckCompiler::Exception::Named::Extra;
 
 use strict;
 use warnings;
@@ -9,14 +9,14 @@ use Moo;
 
 extends 'Throwable::Error';
 
-has parameter => (
+has parameters => (
     is       => 'ro',
     required => 1,
 );
 
 1;
 
-# ABSTRACT: Exception thrown when a required parameter is not passed
+# ABSTRACT: Exception thrown when @_ contains unexpected extra named arguments
 
 __END__
 

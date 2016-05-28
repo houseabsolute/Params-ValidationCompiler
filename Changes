@@ -1,5 +1,10 @@
 {{$NEXT}}
 
+- Add support for positional parameters.
+
+- Add support for type checking extra parameters.
+
+
 0.01     2016-05-24
 
 - First release upon an unsuspecting world.
