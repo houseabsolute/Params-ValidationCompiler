@@ -18,6 +18,7 @@ my %WriteMakefileArgs = (
   "PREREQ_PM" => {
     "Eval::Closure" => 0,
     "Exporter" => 0,
+    "List::SomeUtils" => 0,
     "Moo" => 0,
     "Scalar::Util" => 0,
     "Throwable::Error" => 0,
@@ -38,7 +39,7 @@ my %WriteMakefileArgs = (
   },
   "VERSION" => "0.02",
   "test" => {
-    "TESTS" => "t/*.t"
+    "TESTS" => "t/*.t t/named/*.t t/positional/*.t"
   }
 );
 
@@ -48,6 +49,7 @@ my %FallbackPrereqs = (
   "Exporter" => 0,
   "ExtUtils::MakeMaker" => 0,
   "File::Spec" => 0,
+  "List::SomeUtils" => 0,
   "Moo" => 0,
   "Moose::Util::TypeConstraints" => 0,
   "Scalar::Util" => 0,

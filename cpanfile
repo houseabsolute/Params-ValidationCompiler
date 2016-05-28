@@ -1,5 +1,6 @@
 requires "Eval::Closure" => "0";
 requires "Exporter" => "0";
+requires "List::SomeUtils" => "0";
 requires "Moo" => "0";
 requires "Scalar::Util" => "0";
 requires "Throwable::Error" => "0";
