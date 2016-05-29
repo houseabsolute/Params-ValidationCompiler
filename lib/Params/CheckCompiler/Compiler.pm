@@ -75,7 +75,7 @@ sub _compile_named_args_check {
 
     my $params = $self->params;
 
-    for my $name ( keys %{$params} ) {
+    for my $name ( sort keys %{$params} ) {
         my $spec = $params->{$name};
         $spec = { optional => !$spec } unless ref $spec;
 

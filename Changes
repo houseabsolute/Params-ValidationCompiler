@@ -1,5 +1,9 @@
 {{$NEXT}}
 
+- When generating the source for named params checking, sort the parameters so
+  that the order in which keys are checked is consistent.
+
+
 0.02     2016-05-28
 
 - Add support for positional parameters.
