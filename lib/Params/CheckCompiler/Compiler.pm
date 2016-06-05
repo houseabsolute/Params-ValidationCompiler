@@ -14,8 +14,19 @@ use Params::CheckCompiler::Exception::Positional::Extra;
 use Params::CheckCompiler::Exception::Positional::Required;
 use Params::CheckCompiler::Exception::ValidationFailedForMooseTypeConstraint;
 use Scalar::Util qw( blessed looks_like_number reftype );
+use Sub::Name qw( subname );
 
 use Moo;
+
+has name => (
+    is        => 'ro',
+    predicate => '_has_name',
+);
+
+has caller => (
+    is        => 'ro',
+    predicate => '_has_caller',
+);
 
 has params => (
     is       => 'ro',
@@ -41,10 +52,18 @@ sub subref {
     my $self = shift;
 
     $self->_compile;
-    return eval_closure(
+    my $sub = eval_closure(
         source => 'sub { ' . ( join "\n", @{ $self->_source } ) . ' };',
         environment => $self->_env,
     );
+
+    if ( $self->_has_name ) {
+        my $caller = $self->_has_caller ? $self->caller : caller(1);
+        my $name = join '::', $caller, $self->name;
+        subname( $name, $sub );
+    }
+
+    return $sub;
 }
 
 sub source {

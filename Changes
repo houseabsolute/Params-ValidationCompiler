@@ -3,6 +3,9 @@
 - When generating the source for named params checking, sort the parameters so
   that the order in which keys are checked is consistent.
 
+- You can now pass a name parameter when creating a check subroutine. This
+  will be used to name the generated subroutine using Sub::Name.
+
 
 0.02     2016-05-28
 

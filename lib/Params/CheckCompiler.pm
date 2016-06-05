@@ -121,6 +121,18 @@ hash or a single hashref.
 
 For now, you must shift off the invocant yourself.
 
+This subroutine accepts an additional parameter:
+
+=over 4
+
+=item * name
+
+If this is given, then the generated subroutine will be named using
+L<Sub::Name>. This is strongly recommended as it makes it possible to
+distinguish different check subroutines when profiling or in stack traces.
+
+=back
+
 =head2 source_for(...)
 
 This returns a two element list. The first is a string containing the source
