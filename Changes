@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.03     2016-06-17
+
 - Remove Moose from test prereqs. This is only used for an optional test.
 
 - When generating the source for named params checking, sort the parameters so

@@ -4,7 +4,7 @@ Params::CheckCompiler - Build an optimized subroutine parameter validator once, 
 
 # VERSION
 
-version 0.02
+version 0.03
 
 # SYNOPSIS
 
@@ -93,6 +93,14 @@ parameters or throw an exception. The compiled subroutine accepts either a
 hash or a single hashref.
 
 For now, you must shift off the invocant yourself.
+
+This subroutine accepts an additional parameter:
+
+- name
+
+    If this is given, then the generated subroutine will be named using
+    [Sub::Name](https://metacpan.org/pod/Sub::Name). This is strongly recommended as it makes it possible to
+    distinguish different check subroutines when profiling or in stack traces.
 
 ## source\_for(...)
 
