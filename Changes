@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+- Require Type::Tiny for tests.
+
+
 0.05     2016-06-18
 
 - Removed all remaining uses of Moo.
