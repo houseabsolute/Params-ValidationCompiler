@@ -3,7 +3,7 @@ package Params::CheckCompiler;
 use strict;
 use warnings;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use Params::CheckCompiler::Compiler;
 
