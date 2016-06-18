@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.06     2016-06-18
+
 - Require Type::Tiny for tests. Reported by Slave Rezic. RT #115413.
 
 - Fix tests when Moose is installed but Devel::PartialDump is not. Reported by

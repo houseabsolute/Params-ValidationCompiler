@@ -14,6 +14,7 @@ on 'test' => sub {
   requires "Test2::Plugin::NoWarnings" => "0";
   requires "Test2::Require::Module" => "0";
   requires "Test::More" => "0.96";
+  requires "Type::Tiny" => "0";
 };
 
 on 'test' => sub {

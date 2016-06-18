@@ -31,7 +31,8 @@ my %WriteMakefileArgs = (
     "Test2::Bundle::Extended" => 0,
     "Test2::Plugin::NoWarnings" => 0,
     "Test2::Require::Module" => 0,
-    "Test::More" => "0.96"
+    "Test::More" => "0.96",
+    "Type::Tiny" => 0
   },
   "VERSION" => "0.06",
   "test" => {
@@ -53,6 +54,7 @@ my %FallbackPrereqs = (
   "Test2::Plugin::NoWarnings" => 0,
   "Test2::Require::Module" => 0,
   "Test::More" => "0.96",
+  "Type::Tiny" => 0,
   "strict" => 0,
   "warnings" => 0
 );
