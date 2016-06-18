@@ -1,23 +1,20 @@
 requires "Eval::Closure" => "0";
+requires "Exception::Class" => "0";
 requires "Exporter" => "0";
 requires "List::SomeUtils" => "0";
 requires "Moo" => "0";
 requires "Scalar::Util" => "0";
 requires "Sub::Name" => "0";
-requires "Throwable::Error" => "0";
 requires "strict" => "0";
 requires "warnings" => "0";
 
 on 'test' => sub {
   requires "ExtUtils::MakeMaker" => "0";
   requires "File::Spec" => "0";
-  requires "Specio::Declare" => "0";
-  requires "Specio::Library::Builtins" => "0";
   requires "Test2::Bundle::Extended" => "0";
   requires "Test2::Plugin::NoWarnings" => "0";
   requires "Test2::Require::Module" => "0";
   requires "Test::More" => "0.96";
-  requires "Types::Standard" => "0";
 };
 
 on 'test' => sub {

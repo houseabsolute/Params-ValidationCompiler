@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.04     2016-06-17
+
 - Removed more modules from test prereqs that are only used in optional tests.
 
 - Replace Throwable with Exception::Class.

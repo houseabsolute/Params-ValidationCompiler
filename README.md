@@ -4,7 +4,7 @@ Params::CheckCompiler - Build an optimized subroutine parameter validator once, 
 
 # VERSION
 
-version 0.03
+version 0.04
 
 # SYNOPSIS
 
