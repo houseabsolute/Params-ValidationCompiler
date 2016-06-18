@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+- Removed all remaining uses of Moo.
+
+
 0.04     2016-06-17
 
 - Removed more modules from test prereqs that are only used in optional tests.

@@ -11,37 +11,37 @@ use Params::CheckCompiler::Exceptions;
 use Scalar::Util qw( blessed looks_like_number reftype );
 use Sub::Name qw( subname );
 
-use Moo;
+# I'd rather use Moo here but I want to make things relatively high on the
+# CPAN river like DateTime use this distro, so reducing deps is important.
+sub new {
+    my $class = shift;
+    my %p     = @_;
 
-has name => (
-    is        => 'ro',
-    predicate => '_has_name',
-);
+    my $self = bless \%p, $class;
 
-has caller => (
-    is        => 'ro',
-    predicate => '_has_caller',
-);
+    $self->{_source} = [];
+    $self->{_env}    = {};
 
-has params => (
-    is       => 'ro',
-    required => 1,
-);
+    return $self;
+}
 
-has slurpy => (
-    is      => 'ro',
-    default => 0,
-);
+sub name      { $_[0]->{name} }
+sub _has_name { exists $_[0]->{name} }
 
-has _source => (
-    is      => 'ro',
-    default => sub { [] },
-);
+# I have no idea why critic thinks _caller isn't used.
 
-has _env => (
-    is      => 'ro',
-    default => sub { {} },
-);
+## no critic (Subroutines::ProhibitUnusedPrivateSubroutines)
+sub _caller { $_[0]->{caller} }
+## use critic
+sub _has_caller { exists $_[0]->{caller} }
+
+sub params { $_[0]->{params} }
+
+sub slurpy { $_[0]->{slurpy} }
+
+sub _source { $_[0]->{_source} }
+
+sub _env { $_[0]->{_env} }
 
 sub subref {
     my $self = shift;
@@ -53,7 +53,7 @@ sub subref {
     );
 
     if ( $self->_has_name ) {
-        my $caller = $self->_has_caller ? $self->caller : caller(1);
+        my $caller = $self->_has_caller ? $self->_caller : caller(1);
         my $name = join '::', $caller, $self->name;
         subname( $name, $sub );
     }
