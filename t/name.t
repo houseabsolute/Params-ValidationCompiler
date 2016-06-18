@@ -12,8 +12,9 @@ use Params::CheckCompiler qw( compile );
         params => { foo => 1 },
     );
 
+    my $e = dies { $sub->() };
     like(
-        dies { $sub->() },
+        $e->trace->as_string,
         qr/main::Check for X/,
         'got expected sub name in stack trace',
     );

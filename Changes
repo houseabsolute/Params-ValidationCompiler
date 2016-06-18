@@ -2,6 +2,8 @@
 
 - Removed more modules from test prereqs that are only used in optional tests.
 
+- Replace Throwable with Exception::Class.
+
 
 0.03     2016-06-17
 

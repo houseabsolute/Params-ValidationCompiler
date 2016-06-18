@@ -7,12 +7,7 @@ our $VERSION = '0.04';
 
 use Eval::Closure;
 use List::SomeUtils qw( first_index );
-use Params::CheckCompiler::Exception::BadArguments;
-use Params::CheckCompiler::Exception::Named::Extra;
-use Params::CheckCompiler::Exception::Named::Required;
-use Params::CheckCompiler::Exception::Positional::Extra;
-use Params::CheckCompiler::Exception::Positional::Required;
-use Params::CheckCompiler::Exception::ValidationFailedForMooseTypeConstraint;
+use Params::CheckCompiler::Exceptions;
 use Scalar::Util qw( blessed looks_like_number reftype );
 use Sub::Name qw( subname );
 
