@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+- Remove Moose from test prereqs. This is only used for an optional test.
+
 - When generating the source for named params checking, sort the parameters so
   that the order in which keys are checked is consistent.
 
