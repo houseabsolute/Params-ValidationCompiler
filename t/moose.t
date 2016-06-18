@@ -65,7 +65,7 @@ sub _test_int_type {
     my $name = $type->name;
     like(
         dies { $sub->( foo => [] ) },
-        qr/\QValidation failed for '$name' with value [  ]/,
+        qr/\QValidation failed for '$name' with value \E(?:ARRAY|\[ +\])/,
         'dies when foo is an arrayref'
     );
 }
@@ -94,7 +94,7 @@ sub _test_int_to_arrayref_coercion {
     my $name = $type->name;
     like(
         dies { $sub->( foo => {} ) },
-        qr/\QValidation failed for '$name' with value {  }/,
+        qr/\QValidation failed for '$name' with value \E(?:HASH|\{ +\})/,
         'dies when foo is a hashref'
     );
 }
