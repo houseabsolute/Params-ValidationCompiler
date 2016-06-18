@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+- Removed more modules from test prereqs that are only used in optional tests.
+
+
 0.03     2016-06-17
 
 - Remove Moose from test prereqs. This is only used for an optional test.
