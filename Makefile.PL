@@ -22,6 +22,7 @@ my %WriteMakefileArgs = (
     "List::SomeUtils" => 0,
     "Scalar::Util" => 0,
     "Sub::Name" => 0,
+    "overload" => 0,
     "strict" => 0,
     "warnings" => 0
   },
@@ -55,6 +56,7 @@ my %FallbackPrereqs = (
   "Test2::Require::Module" => 0,
   "Test::More" => "0.96",
   "Type::Tiny" => 0,
+  "overload" => 0,
   "strict" => 0,
   "warnings" => 0
 );

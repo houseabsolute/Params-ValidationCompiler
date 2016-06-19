@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.07     2016-06-18
+
 - Make the compiled sub for checking named params die if given a single object
   as an argument, even if the object is implemented using a hashref. However,
   if the object overloads hash dereferencing then the overloading is

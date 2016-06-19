@@ -4,15 +4,15 @@ Params::CheckCompiler - Build an optimized subroutine parameter validator once, 
 
 # VERSION
 
-version 0.06
+version 0.07
 
 # SYNOPSIS
 
     use Types::Standard qw( Int Str );
-    use Params::CheckCompiler qw( compile );
+    use Params::CheckCompiler qw( validation_for );
 
     {
-        my $check = compile(
+        my $check = validation_for(
             params => {
                 foo => { type => Int },
                 bar => {
@@ -41,8 +41,8 @@ specialized parameter checking subroutine.
 
 # EXPORTS
 
-This module has two options exports, `compile` and `source_for`. Both of
-these subs accept the same options:
+This module has two options exports, `validation_for` and `source_for`. Both
+of these subs accept the same options:
 
 - params
 
@@ -85,11 +85,11 @@ these subs accept the same options:
     You can also pass a type constraint here, in which case all extra arguments
     must be values of the specified type.
 
-## compile(...)
+## validation\_for(...)
 
 This returns a subroutine that implements the specific parameter
 checking. Pass this the arguments in `@_` and it will return a hash of
-parameters or throw an exception. The compiled subroutine accepts either a
+parameters or throw an exception. The generated subroutine accepts either a
 hash or a single hashref.
 
 For now, you must shift off the invocant yourself.
