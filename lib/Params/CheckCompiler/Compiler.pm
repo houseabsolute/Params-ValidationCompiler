@@ -10,6 +10,7 @@ use List::SomeUtils qw( first_index );
 use Params::CheckCompiler::Exceptions;
 use Scalar::Util qw( blessed looks_like_number reftype );
 use Sub::Name qw( subname );
+use overload ();
 
 # I'd rather use Moo here but I want to make things relatively high on the
 # CPAN river like DateTime use this distro, so reducing deps is important.
@@ -129,7 +130,20 @@ if ( @_ % 2 == 0 ) {
 }
 elsif ( @_ == 1 ) {
     if ( ref $_[0] ) {
-        if ( Scalar::Util::reftype( $_[0] ) eq 'HASH' ) {
+        if ( Scalar::Util::blessed( $_[0] ) ) {
+            if ( overload::Overloaded( $_[0] )
+                && defined overload::Method( $_[0], '%{}' ) ) {
+
+                %args = %{ $_[0] };
+            }
+            else {
+                Params::CheckCompiler::Exception::BadArguments->throw(
+                    message =>
+                        'Expected a hash or hash reference but got a single object argument'
+                );
+            }
+        }
+        elsif ( Scalar::Util::reftype( $_[0] ) eq 'HASH' ) {
             %args = %{ $_[0] };
         }
         else {

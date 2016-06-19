@@ -42,6 +42,23 @@ use Params::CheckCompiler qw( compile );
         undef,
         'lives when given a single hashref argument'
     );
+
+    like(
+        dies { $sub->( bless { foo => 42 }, 'anything' ) },
+        qr/Expected a hash or hash reference but got a single object argument/,
+        'dies when passed a blessed object',
+    );
+
+    {
+        package OverloadsHash;
+        use overload '%{}' => sub { return { foo => 42 } };
+    }
+
+    is(
+        dies { $sub->( bless [], 'OverloadsHash' ) },
+        undef,
+        'lives when given a single object that overloads hash dereferencing'
+    );
 }
 
 done_testing();

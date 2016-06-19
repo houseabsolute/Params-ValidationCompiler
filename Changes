@@ -1,5 +1,11 @@
 {{$NEXT}}
 
+- Make the compiled sub for checking named params die if given a single object
+  as an argument, even if the object is implemented using a hashref. However,
+  if the object overloads hash dereferencing then the overloading is
+  used. Reported by Mark Fowler. GitHub #3.
+
+
 0.06     2016-06-18
 
 - Require Type::Tiny for tests. Reported by Slave Rezic. RT #115413.
