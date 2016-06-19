@@ -9,11 +9,13 @@ use Params::CheckCompiler::Compiler;
 
 use Exporter qw( import );
 
-our @EXPORT_OK = qw( compile source_for );
+our @EXPORT_OK = qw( compile source_for validation_for );
 
-sub compile {
+sub validation_for {
     return Params::CheckCompiler::Compiler->new(@_)->subref;
 }
+
+*compile = \&validation_for;
 
 sub source_for {
     return Params::CheckCompiler::Compiler->new(@_)->source_for;
@@ -25,13 +27,17 @@ sub source_for {
 
 __END__
 
+=pod
+
+=for Pod::Coverage compile
+
 =head1 SYNOPSIS
 
     use Types::Standard qw( Int Str );
-    use Params::CheckCompiler qw( compile );
+    use Params::CheckCompiler qw( validation_for );
 
     {
-        my $check = compile(
+        my $check = validation_for(
             params => {
                 foo => { type => Int },
                 bar => {
@@ -60,8 +66,8 @@ specialized parameter checking subroutine.
 
 =head1 EXPORTS
 
-This module has two options exports, C<compile> and C<source_for>. Both of
-these subs accept the same options:
+This module has two options exports, C<validation_for> and C<source_for>. Both
+of these subs accept the same options:
 
 =over 4
 
@@ -112,11 +118,11 @@ must be values of the specified type.
 
 =back
 
-=head2 compile(...)
+=head2 validation_for(...)
 
 This returns a subroutine that implements the specific parameter
 checking. Pass this the arguments in C<@_> and it will return a hash of
-parameters or throw an exception. The compiled subroutine accepts either a
+parameters or throw an exception. The generated subroutine accepts either a
 hash or a single hashref.
 
 For now, you must shift off the invocant yourself.

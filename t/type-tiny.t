@@ -4,7 +4,7 @@ use warnings;
 use Test2::Bundle::Extended;
 use Test2::Plugin::NoWarnings;
 
-use Params::CheckCompiler qw( compile );
+use Params::CheckCompiler qw( validation_for );
 use Types::Standard qw( ArrayRef Int );
 
 subtest(
@@ -77,7 +77,7 @@ done_testing();
 sub _test_int_type {
     my $type = shift;
 
-    my $sub = compile(
+    my $sub = validation_for(
         params => {
             foo => { type => $type },
         },
@@ -100,7 +100,7 @@ sub _test_int_type {
 sub _test_int_to_arrayref_coercion {
     my $type = shift;
 
-    my $sub = compile(
+    my $sub = validation_for(
         params => {
             foo => { type => $type },
         },

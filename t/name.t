@@ -4,10 +4,10 @@ use warnings;
 use Test2::Bundle::Extended;
 use Test2::Plugin::NoWarnings;
 
-use Params::CheckCompiler qw( compile );
+use Params::CheckCompiler qw( validation_for );
 
 {
-    my $sub = compile(
+    my $sub = validation_for(
         name   => 'Check for X',
         params => { foo => 1 },
     );

@@ -6,7 +6,7 @@ use Test2::Bundle::Extended;
 use Test2::Plugin::NoWarnings;
 use Test2::Require::Module 'Moose::Util::TypeConstraints';
 
-use Params::CheckCompiler qw( compile );
+use Params::CheckCompiler qw( validation_for );
 use Moose::Util::TypeConstraints;
 
 my $moose_int = find_type_constraint('Int');
@@ -50,7 +50,7 @@ done_testing();
 sub _test_int_type {
     my $type = shift;
 
-    my $sub = compile(
+    my $sub = validation_for(
         params => {
             foo => { type => $type },
         },
@@ -73,7 +73,7 @@ sub _test_int_type {
 sub _test_int_to_arrayref_coercion {
     my $type = shift;
 
-    my $sub = compile(
+    my $sub = validation_for(
         params => {
             foo => { type => $type },
         },

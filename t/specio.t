@@ -5,7 +5,7 @@ use Test2::Bundle::Extended;
 use Test2::Plugin::NoWarnings;
 use Test2::Require::Module 'Specio' => '0.14';
 
-use Params::CheckCompiler qw( compile );
+use Params::CheckCompiler qw( validation_for );
 use Specio::Declare;
 use Specio::Library::Builtins;
 
@@ -100,7 +100,7 @@ done_testing();
 sub _test_int_type {
     my $type = shift;
 
-    my $sub = compile(
+    my $sub = validation_for(
         params => {
             foo => { type => $type },
         },
@@ -123,7 +123,7 @@ sub _test_int_type {
 sub _test_arrayref_to_int_coercion {
     my $type = shift;
 
-    my $sub = compile(
+    my $sub = validation_for(
         params => {
             foo => { type => $type },
         },

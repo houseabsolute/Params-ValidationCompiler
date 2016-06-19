@@ -4,11 +4,11 @@ use warnings;
 use Test2::Bundle::Extended;
 use Test2::Plugin::NoWarnings;
 
-use Params::CheckCompiler qw( compile );
+use Params::CheckCompiler qw( validation_for );
 use Types::Standard qw( Int );
 
 {
-    my $sub = compile(
+    my $sub = validation_for(
         params => [
             1,
             { optional => 1 },
@@ -29,7 +29,7 @@ use Types::Standard qw( Int );
 }
 
 {
-    my $sub = compile(
+    my $sub = validation_for(
         params => [
             1,
         ],
@@ -50,7 +50,7 @@ use Types::Standard qw( Int );
 }
 
 {
-    my $sub = compile(
+    my $sub = validation_for(
         params => [
             1,
         ],

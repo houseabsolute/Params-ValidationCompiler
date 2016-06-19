@@ -18,7 +18,7 @@ use Types::Standard qw( ArrayRef Dict InstanceOf Int Optional slurpy );
 my $dt = DateTime->new( year => 2016 );
 
 {
-    my $pcc_moose = Params::CheckCompiler::compile(
+    my $pcc_moose = Params::CheckCompiler::validation_for(
         params => [
             { type => find_type_constraint('Int') },
             { type => find_type_constraint('ArrayRef') },
@@ -65,7 +65,7 @@ sub call_pcc_moose_dies {
 }
 
 {
-    my $pcc_tt = Params::CheckCompiler::compile(
+    my $pcc_tt = Params::CheckCompiler::validation_for(
         params => [
             { type => Int },
             { type => ArrayRef },
@@ -108,7 +108,7 @@ sub call_pcc_tt_dies {
 }
 
 {
-    my $pcc_specio = Params::CheckCompiler::compile(
+    my $pcc_specio = Params::CheckCompiler::validation_for(
         params => [
             { type => t('Int') },
             { type => t('ArrayRef') },
@@ -195,7 +195,7 @@ sub call_mxpv_dies {
 }
 
 {
-    my $tp = Type::Params::compile(
+    my $tp = Type::Params::validation_for(
         Int,
         ArrayRef,
         Optional [ InstanceOf ['DateTime'] ],
