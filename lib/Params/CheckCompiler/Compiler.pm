@@ -143,14 +143,14 @@ elsif ( @_ == 1 ) {
                 );
             }
         }
-        elsif ( Scalar::Util::reftype( $_[0] ) eq 'HASH' ) {
+        elsif ( ref $_[0] eq 'HASH' ) {
             %args = %{ $_[0] };
         }
         else {
             Params::CheckCompiler::Exception::BadArguments->throw(
                 message =>
                     'Expected a hash or hash reference but got a single '
-                    . ( Scalar::Util::reftype( $_[0] ) )
+                    . ( ref $_[0] )
                     . ' reference argument',
             );
         }
