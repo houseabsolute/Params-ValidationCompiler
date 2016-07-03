@@ -3,7 +3,7 @@ package Params::ValidationCompiler::Compiler;
 use strict;
 use warnings;
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 use Eval::Closure;
 use List::SomeUtils qw( first_index );
