@@ -2,6 +2,9 @@
 
 - Renamed from Params-CheckCompiler to Params-ValidationCompiler.
 
+- Made Sub::Name optional. If you try to set the name of a generation
+  validation sub without Sub::Name installed, you will get a fatal error.
+
 
 0.07     2016-06-18
 

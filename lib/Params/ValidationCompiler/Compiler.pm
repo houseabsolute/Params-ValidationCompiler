@@ -9,8 +9,16 @@ use Eval::Closure;
 use List::SomeUtils qw( first_index );
 use Params::ValidationCompiler::Exceptions;
 use Scalar::Util qw( blessed looks_like_number reftype );
-use Sub::Name qw( subname );
 use overload ();
+
+BEGIN {
+    unless ( eval { require Sub::Name; Sub::Name->import('subname'); 1; } ) {
+        *subname = sub {
+            die
+                "Cannot name a generated validation subroutine. Please install Sub::Name.\n";
+        };
+    }
+}
 
 # I'd rather use Moo here but I want to make things relatively high on the
 # CPAN river like DateTime use this distro, so reducing deps is important.
