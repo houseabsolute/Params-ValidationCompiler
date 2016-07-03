@@ -7,6 +7,7 @@ requires "Sub::Name" => "0";
 requires "overload" => "0";
 requires "strict" => "0";
 requires "warnings" => "0";
+recommends "Sub::Name" => "0";
 
 on 'test' => sub {
   requires "ExtUtils::MakeMaker" => "0";
@@ -14,7 +15,8 @@ on 'test' => sub {
   requires "Test2::Bundle::Extended" => "0";
   requires "Test2::Plugin::NoWarnings" => "0";
   requires "Test2::Require::Module" => "0";
-  requires "Test::More" => "0.96";
+  requires "Test::More" => "1.302015";
+  requires "Test::Without::Module" => "0";
   requires "Type::Tiny" => "0";
 };
 
@@ -37,6 +39,7 @@ on 'develop' => sub {
   requires "Pod::Coverage::TrustPod" => "0";
   requires "Pod::Wordlist" => "0";
   requires "Specio" => "0.14";
+  requires "Sub::Name" => "0";
   requires "Test::CPAN::Changes" => "0.19";
   requires "Test::CPAN::Meta::JSON" => "0.16";
   requires "Test::Code::TidyAll" => "0.24";

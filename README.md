@@ -4,7 +4,7 @@ Params::ValidationCompiler - Build an optimized subroutine parameter validator o
 
 # VERSION
 
-version 0.07
+version 0.08
 
 # SYNOPSIS
 
@@ -102,6 +102,9 @@ This subroutine accepts an additional parameter:
     [Sub::Name](https://metacpan.org/pod/Sub::Name). This is strongly recommended as it makes it possible to
     distinguish different check subroutines when profiling or in stack traces.
 
+    Note that you must install [Sub::Name](https://metacpan.org/pod/Sub::Name) yourself separately, as it is not
+    required by this distribution, in order to avoid requiring a compiler.
+
 ## source\_for(...)
 
 This returns a two element list. The first is a string containing the source
@@ -111,8 +114,8 @@ passed to [Eval::Closure](https://metacpan.org/pod/Eval::Closure).
 
 # SUPPORT
 
-Bugs may be submitted through [the RT bug tracker](http://rt.cpan.org/Public/Dist/Display.html?Name=Params-CheckCompiler)
-(or [bug-params-checkcompiler@rt.cpan.org](mailto:bug-params-checkcompiler@rt.cpan.org)).
+Bugs may be submitted through [the RT bug tracker](http://rt.cpan.org/Public/Dist/Display.html?Name=Params-ValidationCompiler)
+(or [bug-params-validationcompiler@rt.cpan.org](mailto:bug-params-validationcompiler@rt.cpan.org)).
 
 I am also usually active on IRC as 'drolsky' on `irc://irc.perl.org`.
 

@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.08     2016-07-03
+
 - Renamed from Params-CheckCompiler to Params-ValidationCompiler.
 
 - Made Sub::Name optional. If you try to set the name of a generation
