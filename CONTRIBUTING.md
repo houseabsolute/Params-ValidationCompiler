@@ -40,7 +40,7 @@ https://metacpan.org/release/Params-CheckCompiler
 
 If you use cpanminus, you can do it without downloading the tarball first:
 
-    $ cpanm --reinstall --installdeps --with-recommends Params::CheckCompiler
+    $ cpanm --reinstall --installdeps --with-recommends Params::ValidationCompiler
 
 Dist::Zilla is a very powerful authoring tool, but requires a number of
 author-specific plugins. If you would like to use it for contributing, install
@@ -74,7 +74,7 @@ or
 
 You can also do this via cpanm directly:
 
-    $ cpanm --reinstall --installdeps --with-develop --with-recommends Params::CheckCompiler
+    $ cpanm --reinstall --installdeps --with-develop --with-recommends Params::ValidationCompiler
 
 Once installed, here are some dzil commands you might try:
 

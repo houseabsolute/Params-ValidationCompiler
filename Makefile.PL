@@ -14,7 +14,7 @@ my %WriteMakefileArgs = (
   },
   "DISTNAME" => "Params-CheckCompiler",
   "LICENSE" => "artistic_2",
-  "NAME" => "Params::CheckCompiler",
+  "NAME" => "Params::ValidationCompiler",
   "PREREQ_PM" => {
     "Eval::Closure" => 0,
     "Exception::Class" => 0,

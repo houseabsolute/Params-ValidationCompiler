@@ -1,6 +1,6 @@
 # NAME
 
-Params::CheckCompiler - Build an optimized subroutine parameter validator once, use it forever
+Params::ValidationCompiler - Build an optimized subroutine parameter validator once, use it forever
 
 # VERSION
 
@@ -9,7 +9,7 @@ version 0.07
 # SYNOPSIS
 
     use Types::Standard qw( Int Str );
-    use Params::CheckCompiler qw( validation_for );
+    use Params::ValidationCompiler qw( validation_for );
 
     {
         my $check = validation_for(

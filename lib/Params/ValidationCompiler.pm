@@ -1,24 +1,24 @@
-package Params::CheckCompiler;
+package Params::ValidationCompiler;
 
 use strict;
 use warnings;
 
 our $VERSION = '0.08';
 
-use Params::CheckCompiler::Compiler;
+use Params::ValidationCompiler::Compiler;
 
 use Exporter qw( import );
 
 our @EXPORT_OK = qw( compile source_for validation_for );
 
 sub validation_for {
-    return Params::CheckCompiler::Compiler->new(@_)->subref;
+    return Params::ValidationCompiler::Compiler->new(@_)->subref;
 }
 
 *compile = \&validation_for;
 
 sub source_for {
-    return Params::CheckCompiler::Compiler->new(@_)->source_for;
+    return Params::ValidationCompiler::Compiler->new(@_)->source_for;
 }
 
 1;
@@ -34,7 +34,7 @@ __END__
 =head1 SYNOPSIS
 
     use Types::Standard qw( Int Str );
-    use Params::CheckCompiler qw( validation_for );
+    use Params::ValidationCompiler qw( validation_for );
 
     {
         my $check = validation_for(

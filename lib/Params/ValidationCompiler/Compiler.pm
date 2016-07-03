@@ -1,4 +1,4 @@
-package Params::CheckCompiler::Compiler;
+package Params::ValidationCompiler::Compiler;
 
 use strict;
 use warnings;
@@ -7,7 +7,7 @@ our $VERSION = '0.08';
 
 use Eval::Closure;
 use List::SomeUtils qw( first_index );
-use Params::CheckCompiler::Exceptions;
+use Params::ValidationCompiler::Exceptions;
 use Scalar::Util qw( blessed looks_like_number reftype );
 use Sub::Name qw( subname );
 use overload ();
@@ -137,7 +137,7 @@ elsif ( @_ == 1 ) {
                 %args = %{ $_[0] };
             }
             else {
-                Params::CheckCompiler::Exception::BadArguments->throw(
+                Params::ValidationCompiler::Exception::BadArguments->throw(
                     message =>
                         'Expected a hash or hash reference but got a single object argument'
                 );
@@ -147,7 +147,7 @@ elsif ( @_ == 1 ) {
             %args = %{ $_[0] };
         }
         else {
-            Params::CheckCompiler::Exception::BadArguments->throw(
+            Params::ValidationCompiler::Exception::BadArguments->throw(
                 message =>
                     'Expected a hash or hash reference but got a single '
                     . ( ref $_[0] )
@@ -156,14 +156,14 @@ elsif ( @_ == 1 ) {
         }
     }
     else {
-        Params::CheckCompiler::Exception::BadArguments->throw(
+        Params::ValidationCompiler::Exception::BadArguments->throw(
             message =>
                 'Expected a hash or hash reference but got a single non-reference argument',
         );
     }
 }
 else {
-    Params::CheckCompiler::Exception::BadArguments->throw(
+    Params::ValidationCompiler::Exception::BadArguments->throw(
         message =>
             'Expected a hash or hash reference but got an odd number of arguments',
     );
@@ -181,7 +181,7 @@ sub _add_check_for_required_named_param {
     my $qname = B::perlstring($name);
     push @{ $self->_source }, sprintf( <<'EOF', $access, ($qname) x 2 );
 exists %s
-    or Params::CheckCompiler::Exception::Named::Required->throw(
+    or Params::ValidationCompiler::Exception::Named::Required->throw(
     message   => %s . ' is a required parameter',
     parameter => %s,
     );
@@ -220,7 +220,7 @@ sub _add_check_for_extra_hash_params {
 my @extra = grep { ! $known{$_} } keys %args;
 if ( @extra ) {
     my $u = join ', ', sort @extra;
-    Params::CheckCompiler::Exception::Named::Extra->throw(
+    Params::ValidationCompiler::Exception::Named::Extra->throw(
         message    => "found extra parameters: [$u]",
         parameters => \@extra,
     );
@@ -302,7 +302,7 @@ sub _add_check_for_required_positional_params {
 if ( @_ < %d ) {
     my $got = scalar @_;
     my $got_n = @_ == 1 ? 'parameter' : 'parameters';
-    Params::CheckCompiler::Exception::Positional::Required->throw(
+    Params::ValidationCompiler::Exception::Positional::Required->throw(
         message => "got $got $got_n but expected at least %d",
         minimum => %d,
         got     => scalar @_,
@@ -344,7 +344,7 @@ sub _add_check_for_extra_positional_params {
 if ( @_ > %d ) {
     my $extra = @_ - %d;
     my $extra_n = $extra == 1 ? 'parameter' : 'parameters';
-    Params::CheckCompiler::Exception::Positional::Extra->throw(
+    Params::ValidationCompiler::Exception::Positional::Extra->throw(
         message => "got $extra extra $extra_n",
         maximum => %d,
         got     => scalar @_,
@@ -553,7 +553,7 @@ if ( !%s ) {
     my $type = $types{%s};
     my $msg  = $type->get_message(%s);
     die
-        Params::CheckCompiler::Exception::ValidationFailedForMooseTypeConstraint
+        Params::ValidationCompiler::Exception::ValidationFailedForMooseTypeConstraint
         ->new(
         message   => $msg,
         parameter => 'The ' . %s . ' parameter',

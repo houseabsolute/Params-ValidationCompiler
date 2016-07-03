@@ -7,7 +7,7 @@ use Benchmark qw( cmpthese );
 use DateTime;
 use Moose::Util::TypeConstraints qw( class_type find_type_constraint );
 use MooseX::Params::Validate;
-use Params::CheckCompiler ();
+use Params::ValidationCompiler ();
 use Specio::Declare;
 use Specio::Library::Builtins;
 use Test2::Bundle::Extended;
@@ -18,7 +18,7 @@ use Types::Standard qw( ArrayRef Dict InstanceOf Int Optional slurpy );
 my $dt = DateTime->new( year => 2016 );
 
 {
-    my $pcc_moose = Params::CheckCompiler::validation_for(
+    my $pcc_moose = Params::ValidationCompiler::validation_for(
         params => {
             foo => { type => find_type_constraint('Int') },
             bar => { type => find_type_constraint('ArrayRef') },
@@ -66,7 +66,7 @@ sub call_pcc_moose_dies {
 }
 
 {
-    my $pcc_tt = Params::CheckCompiler::validation_for(
+    my $pcc_tt = Params::ValidationCompiler::validation_for(
         params => {
             foo => { type => Int },
             bar => { type => ArrayRef },
@@ -109,7 +109,7 @@ sub call_pcc_tt_dies {
 }
 
 {
-    my $pcc_specio = Params::CheckCompiler::validation_for(
+    my $pcc_specio = Params::ValidationCompiler::validation_for(
         params => {
             foo => { type => t('Int') },
             bar => { type => t('ArrayRef') },

@@ -7,7 +7,7 @@
 /.tidyall.d
 /Build
 /Debian_CPANTS.txt
-/Params-CheckCompiler-*
+/Params-ValidationCompiler-*
 /_build
 /blib*
 /cover_db*

@@ -4,7 +4,7 @@ use warnings;
 use Test2::Bundle::Extended;
 use Test2::Plugin::NoWarnings;
 
-use Params::CheckCompiler qw( validation_for );
+use Params::ValidationCompiler qw( validation_for );
 use Types::Standard qw( ArrayRef Int );
 
 subtest(

@@ -6,7 +6,7 @@ use Test2::Bundle::Extended;
 use Test2::Plugin::NoWarnings;
 use Test2::Require::Module 'Moose::Util::TypeConstraints';
 
-use Params::CheckCompiler qw( validation_for );
+use Params::ValidationCompiler qw( validation_for );
 use Moose::Util::TypeConstraints;
 
 my $moose_int = find_type_constraint('Int');

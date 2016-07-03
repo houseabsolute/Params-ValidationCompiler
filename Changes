@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+- Renamed from Params-CheckCompiler to Params-ValidationCompiler.
+
+
 0.07     2016-06-18
 
 - Make the compiled sub for checking named params die if given a single object
