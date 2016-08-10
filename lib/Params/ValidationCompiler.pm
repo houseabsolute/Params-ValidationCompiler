@@ -15,7 +15,10 @@ sub validation_for {
     return Params::ValidationCompiler::Compiler->new(@_)->subref;
 }
 
+## no critic (TestingAndDebugging::ProhibitNoWarnings)
+no warnings 'once';
 *compile = \&validation_for;
+## use critic
 
 sub source_for {
     return Params::ValidationCompiler::Compiler->new(@_)->source_for;

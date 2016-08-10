@@ -20,11 +20,43 @@ BEGIN {
     }
 }
 
+my %known = map { $_ => 1 } qw( name params slurpy );
+
 # I'd rather use Moo here but I want to make things relatively high on the
 # CPAN river like DateTime use this distro, so reducing deps is important.
 sub new {
     my $class = shift;
     my %p     = @_;
+
+    unless ( exists $p{params} ) {
+        die
+            qq{You must provide a "params" parameter when creating a parameter validator\n};
+    }
+    unless ( ref $p{params} eq 'HASH' || ref $p{params} eq 'ARRAY' ) {
+        my $type
+            = !defined $p{params} ? 'an undef'
+            : ref $p{params} ? q{a } . ( lc ref $p{params} ) . q{ref}
+            :                  'a scalar';
+
+        die
+            qq{The "params" parameter when creating a parameter validator must be a hashref or arrayref, you passed $type\n};
+    }
+
+    if ( exists $p{name} && ( !defined $p{name} || ref $p{name} ) ) {
+        my $type
+            = !defined $p{name}
+            ? 'an undef'
+            : q{a } . ( lc ref $p{name} ) . q{ref};
+
+        die
+            qq{The "name" parameter when creating a parameter validator must be a scalar, you passed $type\n};
+    }
+
+    my @unknown = sort grep { !$known{$_} } keys %p;
+    if (@unknown) {
+        die
+            "You passed unknown parameters when creating a parameter validator: [@unknown]\n";
+    }
 
     my $self = bless \%p, $class;
 
@@ -108,8 +140,10 @@ sub _compile_named_args_check {
         $self->_add_check_for_required_named_param( $access, $name )
             unless $spec->{optional} || exists $spec->{default};
 
-        $self->_add_default_assignment( $access, $name, $spec->{default} )
-            if exists $spec->{default};
+        $self->_add_default_assignment(
+            $access, $name,
+            $spec->{default}
+        ) if exists $spec->{default};
 
         $self->_add_type_check( $access, $name, $spec )
             if $spec->{type};
@@ -187,7 +221,8 @@ sub _add_check_for_required_named_param {
     my $name   = shift;
 
     my $qname = B::perlstring($name);
-    push @{ $self->_source }, sprintf( <<'EOF', $access, ($qname) x 2 );
+    push @{ $self->_source },
+        sprintf( <<'EOF', $access, ($qname) x 2 );
 exists %s
     or Params::ValidationCompiler::Exception::Named::Required->throw(
     message   => %s . ' is a required parameter',
@@ -202,7 +237,8 @@ sub _add_check_for_extra_hash_param_types {
     my $self = shift;
     my $type = shift;
 
-    $self->_env->{'%known'} = { map { $_ => 1 } keys %{ $self->params } };
+    $self->_env->{'%known'}
+        = { map { $_ => 1 } keys %{ $self->params } };
 
     # We need to set the name argument to something that won't conflict with
     # names someone would actually use for a parameter.
@@ -223,7 +259,8 @@ EOF
 sub _add_check_for_extra_hash_params {
     my $self = shift;
 
-    $self->_env->{'%known'} = { map { $_ => 1 } keys %{ $self->params } };
+    $self->_env->{'%known'}
+        = { map { $_ => 1 } keys %{ $self->params } };
     push @{ $self->_source }, <<'EOF';
 my @extra = grep { ! $known{$_} } keys %args;
 if ( @extra ) {
@@ -249,8 +286,10 @@ sub _compile_positional_args_check {
     # must require at least one param. If there are no optional params then
     # they're all required.
     $self->_add_check_for_required_positional_params(
-        $first_optional_idx == -1 ? ( scalar @specs ) : $first_optional_idx )
-        if $first_optional_idx != 0;
+        $first_optional_idx == -1
+        ? ( scalar @specs )
+        : $first_optional_idx
+    ) if $first_optional_idx != 0;
 
     $self->_add_check_for_extra_positional_params( scalar @specs )
         unless $self->slurpy;
@@ -261,8 +300,10 @@ sub _compile_positional_args_check {
         my $name   = "Parameter $i";
         my $access = "\$_[$i]";
 
-        $self->_add_default_assignment( $access, $name, $spec->{default} )
-            if exists $spec->{default};
+        $self->_add_default_assignment(
+            $access, $name,
+            $spec->{default}
+        ) if exists $spec->{default};
 
         $self->_add_type_check( $access, $name, $spec )
             if $spec->{type};
@@ -471,7 +512,10 @@ sub _add_type_tiny_check {
     }
     else {
         push @source,
-            sprintf( '$types{%s}->assert_valid( %s );', $name, $access );
+            sprintf(
+            '$types{%s}->assert_valid( %s );', $name,
+            $access
+            );
         $self->_env->{'%types'}{$name} = $type;
     }
 
@@ -530,7 +574,10 @@ sub _add_specio_check {
         }
 
         push @source,
-            sprintf( '$types{%s}->validate_or_die(%s);', $name, $access );
+            sprintf(
+            '$types{%s}->validate_or_die(%s);', $name,
+            $access
+            );
         $self->_env->{'%types'}{$name} = $type;
     }
 

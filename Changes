@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+- The parameters you pass when creating a validator are now validated.
+
+
 0.09     2016-07-04
 
 - Really make Sub::Name optional.
