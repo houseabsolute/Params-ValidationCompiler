@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.10     2016-08-10
+
 - The parameters you pass when creating a validator are now validated.
 
 - The $e->message returned when a Moose type fails now includes the parameter

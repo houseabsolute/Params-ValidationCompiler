@@ -4,7 +4,7 @@ Params::ValidationCompiler - Build an optimized subroutine parameter validator o
 
 # VERSION
 
-version 0.09
+version 0.10
 
 # SYNOPSIS
 
@@ -12,7 +12,7 @@ version 0.09
     use Params::ValidationCompiler qw( validation_for );
 
     {
-        my $check = validation_for(
+        my $validator = validation_for(
             params => {
                 foo => { type => Int },
                 bar => {
@@ -27,7 +27,7 @@ version 0.09
         );
 
         sub do_something {
-            my %args = $check->(@_);
+            my %args = $validator->(@_);
         }
     }
 
