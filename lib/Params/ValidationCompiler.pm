@@ -40,7 +40,7 @@ __END__
     use Params::ValidationCompiler qw( validation_for );
 
     {
-        my $check = validation_for(
+        my $validator = validation_for(
             params => {
                 foo => { type => Int },
                 bar => {
@@ -55,7 +55,7 @@ __END__
         );
 
         sub do_something {
-            my %args = $check->(@_);
+            my %args = $validator->(@_);
         }
     }
 
