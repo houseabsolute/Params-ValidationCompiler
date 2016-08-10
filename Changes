@@ -2,6 +2,10 @@
 
 - The parameters you pass when creating a validator are now validated.
 
+- The $e->message returned when a Moose type fails now includes the parameter
+  name or position. Adding these for other type systems will come in a future
+  release.
+
 
 0.09     2016-07-04
 

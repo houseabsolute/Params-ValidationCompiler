@@ -605,14 +605,16 @@ sub _add_moose_check {
 
     my $code = <<'EOF';
 if ( !%s ) {
-    my $type = $types{%s};
-    my $msg  = $type->get_message(%s);
+    my $type  = $types{%s};
+    my $param = %s;
+    my $value = %s;
+    my $msg   = $param . q{ failed with: } . $type->get_message($value);
     die
         Params::ValidationCompiler::Exception::ValidationFailedForMooseTypeConstraint
         ->new(
         message   => $msg,
-        parameter => 'The ' . %s . ' parameter',
-        value     => %s,
+        parameter => $param,
+        value     => $value,
         type      => $type,
         );
 }
@@ -628,7 +630,6 @@ EOF
         $code,
         $check,
         $qname,
-        $access,
         $qname,
         $access,
     );

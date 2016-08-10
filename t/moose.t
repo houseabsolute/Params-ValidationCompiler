@@ -65,7 +65,7 @@ sub _test_int_type {
     my $name = $type->name;
     like(
         dies { $sub->( foo => [] ) },
-        qr/\QValidation failed for '$name' with value \E(?:ARRAY|\[ +\])/,
+        qr/\Qfoo failed with: Validation failed for '$name' with value \E(?:ARRAY|\[ +\])/,
         'dies when foo is an arrayref'
     );
 }
