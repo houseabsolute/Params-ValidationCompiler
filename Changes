@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.11     2016-08-14
+
 - Use Sub::Util instead of Sub::Name as our optional sub-naming module, since
   Sub::Util is part of core as of 5.22.
 

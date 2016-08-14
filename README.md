@@ -4,7 +4,7 @@ Params::ValidationCompiler - Build an optimized subroutine parameter validator o
 
 # VERSION
 
-version 0.10
+version 0.11
 
 # SYNOPSIS
 
@@ -99,10 +99,10 @@ This subroutine accepts an additional parameter:
 - name
 
     If this is given, then the generated subroutine will be named using
-    [Sub::Name](https://metacpan.org/pod/Sub::Name). This is strongly recommended as it makes it possible to
+    [Sub::Util](https://metacpan.org/pod/Sub::Util). This is strongly recommended as it makes it possible to
     distinguish different check subroutines when profiling or in stack traces.
 
-    Note that you must install [Sub::Name](https://metacpan.org/pod/Sub::Name) yourself separately, as it is not
+    Note that you must install [Sub::Util](https://metacpan.org/pod/Sub::Util) yourself separately, as it is not
     required by this distribution, in order to avoid requiring a compiler.
 
 ## source\_for(...)
@@ -140,7 +140,7 @@ button at [http://www.urth.org/~autarch/fs-donation.html](http://www.urth.org/~a
 
 Dave Rolsky <autarch@urth.org>
 
-# COPYRIGHT AND LICENCE
+# COPYRIGHT AND LICENSE
 
 This software is Copyright (c) 2016 by Dave Rolsky.
 

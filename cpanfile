@@ -6,7 +6,7 @@ requires "Scalar::Util" => "0";
 requires "overload" => "0";
 requires "strict" => "0";
 requires "warnings" => "0";
-recommends "Sub::Name" => "0";
+recommends "Sub::Util" => "1.40";
 
 on 'test' => sub {
   requires "ExtUtils::MakeMaker" => "0";
@@ -38,7 +38,7 @@ on 'develop' => sub {
   requires "Pod::Coverage::TrustPod" => "0";
   requires "Pod::Wordlist" => "0";
   requires "Specio" => "0.14";
-  requires "Sub::Name" => "0";
+  requires "Sub::Util" => "1.40";
   requires "Test::CPAN::Changes" => "0.19";
   requires "Test::CPAN::Meta::JSON" => "0.16";
   requires "Test::Code::TidyAll" => "0.24";
