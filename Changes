@@ -1,5 +1,9 @@
 {{$NEXT}}
 
+- Use Sub::Util instead of Sub::Name as our optional sub-naming module, since
+  Sub::Util is part of core as of 5.22.
+
+
 0.10     2016-08-10
 
 - The parameters you pass when creating a validator are now validated.

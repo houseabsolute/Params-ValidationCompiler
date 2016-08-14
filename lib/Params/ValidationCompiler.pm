@@ -137,10 +137,10 @@ This subroutine accepts an additional parameter:
 =item * name
 
 If this is given, then the generated subroutine will be named using
-L<Sub::Name>. This is strongly recommended as it makes it possible to
+L<Sub::Util>. This is strongly recommended as it makes it possible to
 distinguish different check subroutines when profiling or in stack traces.
 
-Note that you must install L<Sub::Name> yourself separately, as it is not
+Note that you must install L<Sub::Util> yourself separately, as it is not
 required by this distribution, in order to avoid requiring a compiler.
 
 =back

@@ -12,10 +12,17 @@ use Scalar::Util qw( blessed looks_like_number reftype );
 use overload ();
 
 BEGIN {
-    unless ( eval { require Sub::Name; Sub::Name->import('subname'); 1; } ) {
-        *subname = sub {
+    unless (
+        eval {
+            require Sub::Util;
+            Sub::Util->VERSION(1.40);
+            Sub::Util->import('set_subname');
+            1;
+        }
+        ) {
+        *set_subname = sub {
             die
-                "Cannot name a generated validation subroutine. Please install Sub::Name.\n";
+                "Cannot name a generated validation subroutine. Please install Sub::Util.\n";
         };
     }
 }
@@ -96,7 +103,7 @@ sub subref {
     if ( $self->_has_name ) {
         my $caller = $self->_has_caller ? $self->_caller : caller(1);
         my $name = join '::', $caller, $self->name;
-        subname( $name, $sub );
+        set_subname( $name, $sub );
     }
 
     return $sub;
