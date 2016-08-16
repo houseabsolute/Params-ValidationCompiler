@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.12     2016-08-16
+
 - Require Specio for tests instead of Type::Tiny. Type::Tiny does not work
   with blead and the maintainer has not responded to bug reports for a while.
 

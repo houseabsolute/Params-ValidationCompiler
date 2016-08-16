@@ -11,12 +11,12 @@ recommends "Sub::Util" => "1.40";
 on 'test' => sub {
   requires "ExtUtils::MakeMaker" => "0";
   requires "File::Spec" => "0";
+  requires "Specio" => "0.14";
   requires "Test2::Bundle::Extended" => "0";
   requires "Test2::Plugin::NoWarnings" => "0";
   requires "Test2::Require::Module" => "0";
   requires "Test::More" => "1.302015";
   requires "Test::Without::Module" => "0";
-  requires "Type::Tiny" => "0";
 };
 
 on 'test' => sub {
