@@ -5,7 +5,7 @@ use Test2::Bundle::Extended;
 use Test2::Plugin::NoWarnings;
 
 use Params::ValidationCompiler qw( validation_for );
-use Types::Standard qw( Int );
+use Specio::Library::Builtins;
 
 {
     my $sub = validation_for(
@@ -54,7 +54,7 @@ use Types::Standard qw( Int );
         params => [
             1,
         ],
-        slurpy => Int,
+        slurpy => t('Int'),
     );
 
     like(

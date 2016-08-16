@@ -5,7 +5,7 @@ use Test2::Bundle::Extended;
 use Test2::Plugin::NoWarnings;
 
 use Params::ValidationCompiler qw( validation_for );
-use Types::Standard qw( Int );
+use Specio::Library::Builtins;
 
 {
     my $sub = validation_for(
@@ -62,7 +62,7 @@ use Types::Standard qw( Int );
         params => {
             foo => 1,
         },
-        slurpy => Int,
+        slurpy => t('Int'),
     );
 
     like(
@@ -89,7 +89,7 @@ use Types::Standard qw( Int );
         dies {
             $sub->( foo => 42, bar => 'string' );
         },
-        qr/Value "string" did not pass type constraint "Int"/,
+        qr/Validation failed for type named Int.+with value "string"/,
         'extra parameters are type checked with one extra',
     );
 
@@ -97,7 +97,7 @@ use Types::Standard qw( Int );
         dies {
             $sub->( foo => 42, baz => 1, bar => 'string' );
         },
-        qr/Value "string" did not pass type constraint "Int"/,
+        qr/Validation failed for type named Int.+with value "string"/,
         'all extra parameters are type checked with multiple extras',
     );
 }

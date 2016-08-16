@@ -1,5 +1,9 @@
 {{$NEXT}}
 
+- Require Specio for tests instead of Type::Tiny. Type::Tiny does not work
+  with blead and the maintainer has not responded to bug reports for a while.
+
+
 0.11     2016-08-14
 
 - Use Sub::Util instead of Sub::Name as our optional sub-naming module, since

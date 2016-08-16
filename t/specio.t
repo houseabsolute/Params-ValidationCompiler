@@ -3,7 +3,6 @@ use warnings;
 
 use Test2::Bundle::Extended;
 use Test2::Plugin::NoWarnings;
-use Test2::Require::Module 'Specio' => '0.14';
 
 use Params::ValidationCompiler qw( validation_for );
 use Specio::Declare;
