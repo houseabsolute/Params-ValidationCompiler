@@ -4,7 +4,6 @@ use warnings;
 
 use Test2::Bundle::Extended;
 use Test2::Plugin::NoWarnings;
-use Test2::Require::Module 'Moose::Util::TypeConstraints';
 
 use Params::ValidationCompiler qw( validation_for );
 
