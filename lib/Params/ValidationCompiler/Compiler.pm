@@ -144,16 +144,20 @@ sub _compile_named_args_check {
         my $qname  = B::perlstring($name);
         my $access = "\$args{$qname}";
 
+        # We check exists $spec->{optional} so as not to blow up on a
+        # restricted hash.
         $self->_add_check_for_required_named_param( $access, $name )
-            unless $spec->{optional} || exists $spec->{default};
+            unless ( exists $spec->{optional} && $spec->{optional} )
+            || exists $spec->{default};
 
         $self->_add_default_assignment(
             $access, $name,
             $spec->{default}
         ) if exists $spec->{default};
 
+        # Same issue with restricted hashes here.
         $self->_add_type_check( $access, $name, $spec )
-            if $spec->{type};
+            if exists $spec->{type} && $spec->{type};
     }
 
     if ( $self->slurpy ) {

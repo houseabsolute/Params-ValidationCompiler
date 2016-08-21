@@ -1,5 +1,10 @@
 {{$NEXT}}
 
+- Small fixes to make sure that you can pass both readonly and locked hashes
+  to both validation_for and the subroutine it creates for you. Locked hashes
+  work and readonly hashes sort of work on some Perls.
+
+
 0.12     2016-08-16
 
 - Require Specio for tests instead of Type::Tiny. Type::Tiny does not work
