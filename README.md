@@ -4,7 +4,7 @@ Params::ValidationCompiler - Build an optimized subroutine parameter validator o
 
 # VERSION
 
-version 0.12
+version 0.13
 
 # SYNOPSIS
 
@@ -104,6 +104,15 @@ This subroutine accepts an additional parameter:
 
     Note that you must install [Sub::Util](https://metacpan.org/pod/Sub::Util) yourself separately, as it is not
     required by this distribution, in order to avoid requiring a compiler.
+
+- name\_is\_optional
+
+    If this is true, then the name is ignored when `Sub::Util` is not
+    installed. If this is false, then passing a name when [Sub::Util](https://metacpan.org/pod/Sub::Util) cannot be
+    loaded causes an exception.
+
+    This is useful for CPAN modules where you want to set a name if you can, but
+    you do not want to add a prerequisite on [Sub::Util](https://metacpan.org/pod/Sub::Util).
 
 ## source\_for(...)
 

@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.13     2016-09-16
+
 - Small fixes to make sure that you can pass both readonly and locked hashes
   to both validation_for and the subroutine it creates for you. Locked hashes
   work and readonly hashes sort of work on some Perls.
