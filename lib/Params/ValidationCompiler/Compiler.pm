@@ -3,7 +3,7 @@ package Params::ValidationCompiler::Compiler;
 use strict;
 use warnings;
 
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 
 use Eval::Closure qw( eval_closure );
 use Params::ValidationCompiler::Exceptions;
