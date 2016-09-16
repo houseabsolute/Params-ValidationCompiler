@@ -6,7 +6,6 @@ use warnings;
 our $VERSION = '0.13';
 
 use Eval::Closure;
-use List::SomeUtils qw( first_index );
 use Params::ValidationCompiler::Exceptions;
 use Scalar::Util qw( blessed looks_like_number reftype );
 use overload ();
@@ -291,7 +290,12 @@ sub _compile_positional_args_check {
 
     my @specs = $self->_munge_and_check_positional_params;
 
-    my $first_optional_idx = first_index { $_->{optional} } @specs;
+    my $first_optional_idx = -1;
+    for my $i (0..$#specs) {
+        next unless $specs[$i]{optional};
+        $first_optional_idx = $i;
+        last;
+    }
 
     # If optional params start anywhere after the first parameter spec then we
     # must require at least one param. If there are no optional params then

@@ -4,6 +4,8 @@
   to both validation_for and the subroutine it creates for you. Locked hashes
   work and readonly hashes sort of work on some Perls.
 
+- Removed List::SomeUtils as a prereq.
+
 
 0.12     2016-08-16
 
