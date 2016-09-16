@@ -5,7 +5,7 @@ use warnings;
 
 our $VERSION = '0.13';
 
-use Eval::Closure;
+use Eval::Closure qw( eval_closure );
 use Params::ValidationCompiler::Exceptions;
 use Scalar::Util qw( blessed looks_like_number reftype );
 use overload ();
