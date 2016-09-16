@@ -143,6 +143,15 @@ distinguish different check subroutines when profiling or in stack traces.
 Note that you must install L<Sub::Util> yourself separately, as it is not
 required by this distribution, in order to avoid requiring a compiler.
 
+=item * name_is_optional
+
+If this is true, then the name is ignored when C<Sub::Util> is not
+installed. If this is false, then passing a name when L<Sub::Util> cannot be
+loaded causes an exception.
+
+This is useful for CPAN modules where you want to set a name if you can, but
+you do not want to add a prerequisite on L<Sub::Util>.
+
 =back
 
 =head2 source_for(...)

@@ -11,14 +11,18 @@ use Scalar::Util qw( blessed looks_like_number reftype );
 use overload ();
 
 BEGIN {
-    unless (
-        eval {
-            require Sub::Util;
-            Sub::Util->VERSION(1.40);
-            Sub::Util->import('set_subname');
-            1;
-        }
-        ) {
+    ## no critic (Variables::RequireInitializationForLocalVars)
+    local $@;
+    my $has_sub_util = eval {
+        require Sub::Util;
+        Sub::Util->VERSION(1.40);
+        Sub::Util->import('set_subname');
+        1;
+    };
+
+    sub HAS_SUB_UTIL () {$has_sub_util}
+
+    unless ($has_sub_util) {
         *set_subname = sub {
             die
                 "Cannot name a generated validation subroutine. Please install Sub::Util.\n";
@@ -26,7 +30,7 @@ BEGIN {
     }
 }
 
-my %known = map { $_ => 1 } qw( name params slurpy );
+my %known = map { $_ => 1 } qw( name name_is_optional params slurpy );
 
 # I'd rather use Moo here but I want to make things relatively high on the
 # CPAN river like DateTime use this distro, so reducing deps is important.
@@ -75,6 +79,8 @@ sub new {
 sub name      { $_[0]->{name} }
 sub _has_name { exists $_[0]->{name} }
 
+sub _name_is_optional { $_[0]->{name_is_optional} }
+
 # I have no idea why critic thinks _caller isn't used.
 
 ## no critic (Subroutines::ProhibitUnusedPrivateSubroutines)
@@ -102,6 +108,8 @@ sub subref {
     if ( $self->_has_name ) {
         my $caller = $self->_has_caller ? $self->_caller : caller(1);
         my $name = join '::', $caller, $self->name;
+
+        return $sub if $self->_name_is_optional && !HAS_SUB_UTIL;
         set_subname( $name, $sub );
     }
 
@@ -291,7 +299,7 @@ sub _compile_positional_args_check {
     my @specs = $self->_munge_and_check_positional_params;
 
     my $first_optional_idx = -1;
-    for my $i (0..$#specs) {
+    for my $i ( 0 .. $#specs ) {
         next unless $specs[$i]{optional};
         $first_optional_idx = $i;
         last;

@@ -23,4 +23,19 @@ use Params::ValidationCompiler qw( validation_for );
     );
 }
 
+{
+
+    is(
+        dies {
+            validation_for(
+                name             => 'Check for X',
+                name_is_optional => 1,
+                params           => { foo => 1 },
+            );
+        },
+        undef,
+        'passing name and name_is_optional when Sub::Util is not installed lives'
+    );
+}
+
 done_testing();

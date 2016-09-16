@@ -4,6 +4,10 @@
   to both validation_for and the subroutine it creates for you. Locked hashes
   work and readonly hashes sort of work on some Perls.
 
+- Added a new parameter, "name_is_optional". When this is true, the "name"
+  parameter is simply ignored when Sub::Util is not available, rather than
+  causing an exception.
+
 - Removed List::SomeUtils as a prereq.
 
 
