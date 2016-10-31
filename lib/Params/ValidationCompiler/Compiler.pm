@@ -6,6 +6,7 @@ use warnings;
 our $VERSION = '0.14';
 
 use Eval::Closure qw( eval_closure );
+use List::Util 1.29 qw( pairkeys );
 use Params::ValidationCompiler::Exceptions;
 use Scalar::Util qw( blessed looks_like_number reftype );
 use overload ();
@@ -30,7 +31,8 @@ BEGIN {
     }
 }
 
-my %known = map { $_ => 1 } qw( name name_is_optional params slurpy );
+my %known = map { $_ => 1 }
+    qw( name name_is_optional params slurpy validate_pairs_to_value_list );
 
 # I'd rather use Moo here but I want to make things relatively high on the
 # CPAN river like DateTime use this distro, so reducing deps is important.
@@ -42,7 +44,19 @@ sub new {
         die
             qq{You must provide a "params" parameter when creating a parameter validator\n};
     }
-    unless ( ref $p{params} eq 'HASH' || ref $p{params} eq 'ARRAY' ) {
+    if ( ref $p{params} eq 'HASH' ) {
+        die q{The "params" hashref must contain at least one key-value pair}
+            unless %{ $p{params} };
+
+        die
+            q{"validate_pairs_to_value_list" must be used with arrayref params containing key-value pairs}
+            if $p{validate_pairs_to_value_list};
+    }
+    elsif ( ref $p{params} eq 'ARRAY' ) {
+        die 'The "params" arrayref must contain at least one element'
+            unless @{ $p{params} };
+    }
+    else {
         my $type
             = !defined $p{params} ? 'an undef'
             : ref $p{params} ? q{a } . ( lc ref $p{params} ) . q{ref}
@@ -50,6 +64,10 @@ sub new {
 
         die
             qq{The "params" parameter when creating a parameter validator must be a hashref or arrayref, you passed $type\n};
+    }
+
+    if ( $p{validate_pairs_to_value_list} && $p{slurpy} ) {
+        die q{You cannot use "validate_pairs_to_value_list" and "slurpy" together};
     }
 
     if ( exists $p{name} && ( !defined $p{name} || ref $p{name} ) ) {
@@ -96,6 +114,8 @@ sub _source { $_[0]->{_source} }
 
 sub _env { $_[0]->{_env} }
 
+sub validate_pairs_to_value_list { $_[0]->{validate_pairs_to_value_list} }
+
 sub subref {
     my $self = shift;
 
@@ -133,16 +153,50 @@ sub _compile {
         $self->_compile_named_args_check;
     }
     elsif ( ref $self->params eq 'ARRAY' ) {
-        $self->_compile_positional_args_check;
+        if ( $self->validate_pairs_to_value_list ) {
+            $self->_compile_named_args_list_check;
+        }
+        else {
+            $self->_compile_positional_args_check;
+        }
     }
 }
 
 sub _compile_named_args_check {
     my $self = shift;
 
-    push @{ $self->_source }, $self->_set_named_args_hash;
+    $self->_compile_named_args_check_body( $self->params );
+    push @{ $self->_source }, 'return %args;';
 
-    my $params = $self->params;
+    return;
+}
+
+sub _compile_named_args_list_check {
+    my $self = shift;
+
+    $self->_compile_named_args_check_body( { @{ $self->params } } );
+
+    my @keys = map { B::perlstring($_) } pairkeys @{ $self->params };
+
+    # If we don't handle the one-key case specially we end up getting a
+    # warning like "Scalar value @args{"bar"} better written as $args{"bar"}
+    # at ..."
+    if ( @keys == 1 ) {
+        push @{ $self->_source }, "return \$args{$keys[0]};";
+    }
+    else {
+        my $keys_str = join q{, }, @keys;
+        push @{ $self->_source }, "return \@args{$keys_str};";
+    }
+
+    return;
+}
+
+sub _compile_named_args_check_body {
+    my $self   = shift;
+    my $params = shift;
+
+    push @{ $self->_source }, $self->_set_named_args_hash;
 
     for my $name ( sort keys %{$params} ) {
         my $spec = $params->{$name};
@@ -168,14 +222,12 @@ sub _compile_named_args_check {
     }
 
     if ( $self->slurpy ) {
-        $self->_add_check_for_extra_hash_param_types( $self->slurpy )
+        $self->_add_check_for_extra_hash_param_types( $self->slurpy, $params )
             if ref $self->slurpy;
     }
     else {
-        $self->_add_check_for_extra_hash_params;
+        $self->_add_check_for_extra_hash_params($params);
     }
-
-    push @{ $self->_source }, 'return %args;';
 
     return;
 }
@@ -252,11 +304,12 @@ EOF
 }
 
 sub _add_check_for_extra_hash_param_types {
-    my $self = shift;
-    my $type = shift;
+    my $self   = shift;
+    my $type   = shift;
+    my $params = shift;
 
     $self->_env->{'%known'}
-        = { map { $_ => 1 } keys %{ $self->params } };
+        = { map { $_ => 1 } keys %{$params} };
 
     # We need to set the name argument to something that won't conflict with
     # names someone would actually use for a parameter.
@@ -275,10 +328,11 @@ EOF
 }
 
 sub _add_check_for_extra_hash_params {
-    my $self = shift;
+    my $self   = shift;
+    my $params = shift;
 
     $self->_env->{'%known'}
-        = { map { $_ => 1 } keys %{ $self->params } };
+        = { map { $_ => 1 } keys %{$params} };
     push @{ $self->_source }, <<'EOF';
 my @extra = grep { ! $known{$_} } keys %args;
 if ( @extra ) {

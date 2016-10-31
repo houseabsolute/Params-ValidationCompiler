@@ -78,8 +78,12 @@ of these subs accept the same options:
 
 An arrayref or hashref containing a parameter specification.
 
-If you pass an arrayref, the check will expect positional params. Each member
-of the arrayref represents a single parameter to validate.
+If you pass an arrayref, the check will expect positional params. If you are
+not using C<validate_pairs_to_value_list>, each member of the arrayref
+represents a single parameter to validate. If you are using
+C<validate_pairs_to_value_list>, the arrayref should consist of a list of
+named params in the order in which the values should be returned from the
+subroutine; the parameter names are the keys and the specs are the values.
 
 If you pass a hashref then it will expect named params. For hashrefs, the
 parameters names are the keys and the specs are the values.
@@ -119,14 +123,25 @@ cause an exception.
 You can also pass a type constraint here, in which case all extra arguments
 must be values of the specified type.
 
+=item * validate_pairs_to_value_list
+
+If this is true, the generated subroutine will expect a list of key-value
+pairs or a hashref and it will return a list containing only the values.
+C<params> must be a arrayref of key-value pairs in the order of which the
+values should be returned.
+
+You cannot combine C<slurpy> with C<validate_pairs_to_value_list> as there is
+no way to know how the order in which extra values should be returned.
+
 =back
 
 =head2 validation_for(...)
 
 This returns a subroutine that implements the specific parameter
-checking. Pass this the arguments in C<@_> and it will return a hash of
-parameters or throw an exception. The generated subroutine accepts either a
-hash or a single hashref.
+checking. This subroutine expects to be given the parameters to validate in
+C<@_>. It will return a list of the parameter key-value pairs or throw an
+exception. The generated subroutine accepts either a list of key-value pairs
+or a single hashref.
 
 For now, you must shift off the invocant yourself.
 
