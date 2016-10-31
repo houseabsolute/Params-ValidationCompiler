@@ -32,19 +32,19 @@ like(
 );
 
 like(
-    dies { validation_for( params => {}, foo => 1, bar => 2 ) },
+    dies { validation_for( params => { a => {} }, foo => 1, bar => 2 ) },
     qr/\QYou passed unknown parameters when creating a parameter validator: [bar foo]/,
     'got expected error message when validation_for is called with extra unknown parameters'
 );
 
 like(
-    dies { validation_for( params => {}, name => undef, ) },
+    dies { validation_for( params => { a => {} }, name => undef, ) },
     qr/\QThe "name" parameter when creating a parameter validator must be a scalar, you passed an undef/,
     'got expected error message when validation_for is called with name as an undef'
 );
 
 like(
-    dies { validation_for( params => {}, name => [], ) },
+    dies { validation_for( params => { a => {} }, name => [], ) },
     qr/\QThe "name" parameter when creating a parameter validator must be a scalar, you passed a arrayref/,
     'got expected error message when validation_for is called with name as an arrayref'
 );

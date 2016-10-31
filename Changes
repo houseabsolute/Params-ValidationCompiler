@@ -1,5 +1,9 @@
 {{$NEXT}}
 
+- Added C<validate_pairs_to_value_list> to support returning only the
+  parameter values from the subroutine rather than the key-value pairs.
+
+
 0.13     2016-09-16
 
 - Small fixes to make sure that you can pass both readonly and locked hashes
