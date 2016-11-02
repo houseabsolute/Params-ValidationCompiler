@@ -52,12 +52,12 @@ like(
 like(
     dies {
         validation_for(
-            params                       => [ a => 1 ],
-            validate_pairs_to_value_list => 1,
-            slurpy                       => 1,
+            params        => [ a => 1 ],
+            named_to_list => 1,
+            slurpy        => 1,
         );
     },
-    qr/\QYou cannot use "validate_pairs_to_value_list" and "slurpy" together\E.+at t.self-check\.t line \d+/,
+    qr/\QYou cannot use "named_to_list" and "slurpy" together\E.+at t.self-check\.t line \d+/,
 );
 
 done_testing();

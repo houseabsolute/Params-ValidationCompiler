@@ -12,7 +12,7 @@ use Params::ValidationCompiler qw( validation_for );
             bar => 0,
             foo => 1,
         ],
-        validate_pairs_to_value_list => 1,
+        named_to_list => 1,
     );
 
     is(
@@ -32,7 +32,7 @@ use Params::ValidationCompiler qw( validation_for );
         params => [
             bar => 0,
         ],
-        validate_pairs_to_value_list => 1,
+        named_to_list => 1,
     );
 }
 

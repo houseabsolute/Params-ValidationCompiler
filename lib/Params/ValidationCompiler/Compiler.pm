@@ -34,8 +34,8 @@ BEGIN {
     }
 }
 
-my %known = map { $_ => 1 }
-    qw( name name_is_optional params slurpy validate_pairs_to_value_list );
+my %known
+    = map { $_ => 1 } qw( name name_is_optional params slurpy named_to_list );
 
 # I'd rather use Moo here but I want to make things relatively high on the
 # CPAN river like DateTime use this distro, so reducing deps is important.
@@ -52,8 +52,8 @@ sub new {
             unless %{ $p{params} };
 
         croak
-            q{"validate_pairs_to_value_list" must be used with arrayref params containing key-value pairs}
-            if $p{validate_pairs_to_value_list};
+            q{"named_to_list" must be used with arrayref params containing key-value pairs}
+            if $p{named_to_list};
     }
     elsif ( ref $p{params} eq 'ARRAY' ) {
         croak q{The "params" arrayref must contain at least one element}
@@ -69,9 +69,8 @@ sub new {
             qq{The "params" parameter when creating a parameter validator must be a hashref or arrayref, you passed $type};
     }
 
-    if ( $p{validate_pairs_to_value_list} && $p{slurpy} ) {
-        croak
-            q{You cannot use "validate_pairs_to_value_list" and "slurpy" together};
+    if ( $p{named_to_list} && $p{slurpy} ) {
+        croak q{You cannot use "named_to_list" and "slurpy" together};
     }
 
     if ( exists $p{name} && ( !defined $p{name} || ref $p{name} ) ) {
@@ -118,7 +117,7 @@ sub _source { $_[0]->{_source} }
 
 sub _env { $_[0]->{_env} }
 
-sub validate_pairs_to_value_list { $_[0]->{validate_pairs_to_value_list} }
+sub named_to_list { $_[0]->{named_to_list} }
 
 sub subref {
     my $self = shift;
@@ -157,7 +156,7 @@ sub _compile {
         $self->_compile_named_args_check;
     }
     elsif ( ref $self->params eq 'ARRAY' ) {
-        if ( $self->validate_pairs_to_value_list ) {
+        if ( $self->named_to_list ) {
             $self->_compile_named_args_list_check;
         }
         else {

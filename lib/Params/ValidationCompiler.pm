@@ -84,7 +84,7 @@ __END__
                     optional => 1,
                 },
             ],
-            validate_pairs_to_value_list => 1,
+            named_to_list => 1,
         );
 
         sub do_something {
@@ -118,14 +118,14 @@ If you pass a hashref then the generated validator sub will expect named
 parameters. The C<params> value should be a hashref where the parameter names
 are keys and the specs are the values.
 
-If you pass an arrayref and C<validate_pairs_to_value_list> is false, the
-validator will expect positional params. Each element of the C<params>
-arrayref should be a parameter spec.
+If you pass an arrayref and C<named_to_list> is false, the validator will
+expect positional params. Each element of the C<params> arrayref should be a
+parameter spec.
 
-If you pass an arrayref and C<validate_pairs_to_value_list> is false, the
-validator will expect named params, but will return a list of values. In this
-case the arrayref should contain a I<list> of key/value pairs, where parameter
-names are the keys and the specs are the values.
+If you pass an arrayref and C<named_to_list> is false, the validator will
+expect named params, but will return a list of values. In this case the
+arrayref should contain a I<list> of key/value pairs, where parameter names
+are the keys and the specs are the values.
 
 Each spec can contain either a boolean or hashref. If the spec is a boolean,
 this indicates required (true) or optional (false).
@@ -162,15 +162,15 @@ cause an exception.
 You can also pass a type constraint here, in which case all extra arguments
 must be values of the specified type.
 
-=item * validate_pairs_to_value_list
+=item * named_to_list
 
 If this is true, the generated subroutine will expect a list of key-value
 pairs or a hashref and it will return a list containing only the values.
 C<params> must be a arrayref of key-value pairs in the order of which the
 values should be returned.
 
-You cannot combine C<slurpy> with C<validate_pairs_to_value_list> as there is
-no way to know how the order in which extra values should be returned.
+You cannot combine C<slurpy> with C<named_to_list> as there is no way to know
+how the order in which extra values should be returned.
 
 =back
 
