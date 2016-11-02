@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.14     2016-11-02
+
 - Added a "named_to_list" option to support returning only the parameter
   values from a named parameter validator rather than the key-value pairs.
 

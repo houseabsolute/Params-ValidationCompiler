@@ -4,7 +4,7 @@ Params::ValidationCompiler - Build an optimized subroutine parameter validator o
 
 # VERSION
 
-version 0.13
+version 0.14
 
 # SYNOPSIS
 
@@ -31,13 +31,49 @@ version 0.13
         }
     }
 
+    {
+        my $validator = validation_for(
+            params => [
+                { type => Int },
+                {
+                    type     => Str,
+                    optional => 1,
+                },
+            ],
+        );
+
+        sub do_something {
+            my ( $int, $str ) = $validator->(@_);
+        }
+    }
+
+    {
+        my $validator = validation_for(
+            params => [
+                foo => { type => Int },
+                bar => {
+                    type     => Str,
+                    optional => 1,
+                },
+            ],
+            named_to_list => 1,
+        );
+
+        sub do_something {
+            my ( $foo, $bar ) = $validator->(@_);
+        }
+    }
+
 # DESCRIPTION
 
-**This is very alpha. The module name could change. Everything could
-change. You have been warned.**
+**This is still fairly alpha. Things could change. You have been warned.**
 
-Create a customized, optimized, non-lobotomized, uncompromised, and thoroughly
-specialized parameter checking subroutine.
+This module creates a customized, highly efficient parameter checking
+subroutine. It can handle named or positional parameters, and can return the
+parameters as key/value pairs or a list of values.
+
+In addition to type checks, it also supports parameter defaults, optional
+parameters, and extra "slurpy" parameters.
 
 # EXPORTS
 
@@ -48,16 +84,23 @@ of these subs accept the same options:
 
     An arrayref or hashref containing a parameter specification.
 
-    If you pass an arrayref, the check will expect positional params. Each member
-    of the arrayref represents a single parameter to validate.
+    If you pass a hashref then the generated validator sub will expect named
+    parameters. The `params` value should be a hashref where the parameter names
+    are keys and the specs are the values.
 
-    If you pass a hashref then it will expect named params. For hashrefs, the
-    parameters names are the keys and the specs are the values.
+    If you pass an arrayref and `named_to_list` is false, the validator will
+    expect positional params. Each element of the `params` arrayref should be a
+    parameter spec.
 
-    The spec can contain either a boolean or hashref. If the spec is a boolean,
+    If you pass an arrayref and `named_to_list` is false, the validator will
+    expect named params, but will return a list of values. In this case the
+    arrayref should contain a _list_ of key/value pairs, where parameter names
+    are the keys and the specs are the values.
+
+    Each spec can contain either a boolean or hashref. If the spec is a boolean,
     this indicates required (true) or optional (false).
 
-    The hashref accepts the following keys:
+    The spec hashref accepts the following keys:
 
     - type
 
@@ -85,12 +128,28 @@ of these subs accept the same options:
     You can also pass a type constraint here, in which case all extra arguments
     must be values of the specified type.
 
+- named\_to\_list
+
+    If this is true, the generated subroutine will expect a list of key-value
+    pairs or a hashref and it will return a list containing only the values.
+    `params` must be a arrayref of key-value pairs in the order of which the
+    values should be returned.
+
+    You cannot combine `slurpy` with `named_to_list` as there is no way to know
+    how the order in which extra values should be returned.
+
 ## validation\_for(...)
 
 This returns a subroutine that implements the specific parameter
-checking. Pass this the arguments in `@_` and it will return a hash of
-parameters or throw an exception. The generated subroutine accepts either a
-hash or a single hashref.
+checking. This subroutine expects to be given the parameters to validate in
+`@_`. If all the parameters are valid, it will return the validated
+parameters (with defaults as appropriate), either as a list of key-value pairs
+or as a list of just values. If any of the parameters are invalid it will
+throw an exception.
+
+For validators expected named params, the generated subroutine accepts either
+a list of key-value pairs or a single hashref. Otherwise the validator expects
+a list of values.
 
 For now, you must shift off the invocant yourself.
 
@@ -148,6 +207,10 @@ button at [http://www.urth.org/~autarch/fs-donation.html](http://www.urth.org/~a
 # AUTHOR
 
 Dave Rolsky <autarch@urth.org>
+
+# CONTRIBUTOR
+
+Gregory Oschwald <goschwald@maxmind.com>
 
 # COPYRIGHT AND LICENSE
 
