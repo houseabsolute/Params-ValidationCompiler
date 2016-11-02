@@ -59,6 +59,39 @@ __END__
         }
     }
 
+    {
+        my $validator = validation_for(
+            params => [
+                { type => Int },
+                {
+                    type     => Str,
+                    optional => 1,
+                },
+            ],
+        );
+
+        sub do_something {
+            my ( $int, $str ) = $validator->(@_);
+        }
+    }
+
+    {
+        my $validator = validation_for(
+            params => [
+                foo => { type => Int },
+                bar => {
+                    type     => Str,
+                    optional => 1,
+                },
+            ],
+            validate_pairs_to_value_list => 1,
+        );
+
+        sub do_something {
+            my ( $foo, $bar ) = $validator->(@_);
+        }
+    }
+
 =head1 DESCRIPTION
 
 B<This is very alpha. The module name could change. Everything could
