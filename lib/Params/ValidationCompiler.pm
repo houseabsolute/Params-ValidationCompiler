@@ -94,11 +94,14 @@ __END__
 
 =head1 DESCRIPTION
 
-B<This is very alpha. The module name could change. Everything could
-change. You have been warned.>
+B<This is still fairly alpha. Things could change. You have been warned.>
 
-Create a customized, optimized, non-lobotomized, uncompromised, and thoroughly
-specialized parameter checking subroutine.
+This module creates a customized, highly efficient parameter checking
+subroutine. It can handle named or positional parameters, and can return the
+parameters as key/value pairs or a list of values.
+
+In addition to type checks, it also supports parameter defaults, optional
+parameters, and extra "slurpy" parameters.
 
 =head1 EXPORTS
 
@@ -111,20 +114,23 @@ of these subs accept the same options:
 
 An arrayref or hashref containing a parameter specification.
 
-If you pass an arrayref, the check will expect positional params. If you are
-not using C<validate_pairs_to_value_list>, each member of the arrayref
-represents a single parameter to validate. If you are using
-C<validate_pairs_to_value_list>, the arrayref should consist of a list of
-named params in the order in which the values should be returned from the
-subroutine; the parameter names are the keys and the specs are the values.
+If you pass a hashref then the generated validator sub will expect named
+parameters. The C<params> value should be a hashref where the parameter names
+are keys and the specs are the values.
 
-If you pass a hashref then it will expect named params. For hashrefs, the
-parameters names are the keys and the specs are the values.
+If you pass an arrayref and C<validate_pairs_to_value_list> is false, the
+validator will expect positional params. Each element of the C<params>
+arrayref should be a parameter spec.
 
-The spec can contain either a boolean or hashref. If the spec is a boolean,
+If you pass an arrayref and C<validate_pairs_to_value_list> is false, the
+validator will expect named params, but will return a list of values. In this
+case the arrayref should contain a I<list> of key/value pairs, where parameter
+names are the keys and the specs are the values.
+
+Each spec can contain either a boolean or hashref. If the spec is a boolean,
 this indicates required (true) or optional (false).
 
-The hashref accepts the following keys:
+The spec hashref accepts the following keys:
 
 =over 8
 
@@ -172,9 +178,14 @@ no way to know how the order in which extra values should be returned.
 
 This returns a subroutine that implements the specific parameter
 checking. This subroutine expects to be given the parameters to validate in
-C<@_>. It will return a list of the parameter key-value pairs or throw an
-exception. The generated subroutine accepts either a list of key-value pairs
-or a single hashref.
+C<@_>. If all the parameters are valid, it will return the validated
+parameters (with defaults as appropriate), either as a list of key-value pairs
+or as a list of just values. If any of the parameters are invalid it will
+throw an exception.
+
+For validators expected named params, the generated subroutine accepts either
+a list of key-value pairs or a single hashref. Otherwise the validator expects
+a list of values.
 
 For now, you must shift off the invocant yourself.
 
