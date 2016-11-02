@@ -53,7 +53,7 @@ sub new {
             if $p{validate_pairs_to_value_list};
     }
     elsif ( ref $p{params} eq 'ARRAY' ) {
-        die 'The "params" arrayref must contain at least one element'
+        die q{The "params" arrayref must contain at least one element}
             unless @{ $p{params} };
     }
     else {
@@ -63,7 +63,7 @@ sub new {
             :                  'a scalar';
 
         die
-            qq{The "params" parameter when creating a parameter validator must be a hashref or arrayref, you passed $type\n};
+            qq{The "params" parameter when creating a parameter validator must be a hashref or arrayref, you passed $type};
     }
 
     if ( $p{validate_pairs_to_value_list} && $p{slurpy} ) {
@@ -77,13 +77,13 @@ sub new {
             : q{a } . ( lc ref $p{name} ) . q{ref};
 
         die
-            qq{The "name" parameter when creating a parameter validator must be a scalar, you passed $type\n};
+            qq{The "name" parameter when creating a parameter validator must be a scalar, you passed $type};
     }
 
     my @unknown = sort grep { !$known{$_} } keys %p;
     if (@unknown) {
         die
-            "You passed unknown parameters when creating a parameter validator: [@unknown]\n";
+            "You passed unknown parameters when creating a parameter validator: [@unknown]";
     }
 
     my $self = bless \%p, $class;
