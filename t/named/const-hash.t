@@ -9,10 +9,9 @@ use Const::Fast;
 use Params::ValidationCompiler qw( validation_for );
 use Specio::Library::Builtins;
 
-skip_all(<<'EOF');
-Const::Fast doesn't work on dev/blead perl. Also the tests fail on Perl 5.18
-but not others for no reason I can understand;
-EOF
+skip_all(
+    q{Const::Fast doesn't work on dev/blead perl. Also the tests fail on Perl 5.18 but not others for no reason I can understand}
+);
 
 {
     # Trying to use const my %spec gives a "Can't store CODE items at
