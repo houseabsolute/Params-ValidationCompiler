@@ -9,43 +9,43 @@ use Params::ValidationCompiler qw( validation_for );
 
 like(
     dies { validation_for() },
-    qr/\QYou must provide a "params" parameter when creating a parameter validator/,
+    qr/\QYou must provide a "params" parameter when creating a parameter validator\E.+at t.self-check\.t line \d+/,
     'got expected error message when validation_for is called without parameters'
 );
 
 like(
     dies { validation_for( params => 42 ) },
-    qr/\QThe "params" parameter when creating a parameter validator must be a hashref or arrayref, you passed a scalar/,
+    qr/\QThe "params" parameter when creating a parameter validator must be a hashref or arrayref, you passed a scalar\E.+at t.self-check\.t line \d+/,
     'got expected error message when validation_for is called with params as a scalar'
 );
 
 like(
     dies { validation_for( params => undef ) },
-    qr/\QThe "params" parameter when creating a parameter validator must be a hashref or arrayref, you passed an undef/,
+    qr/\QThe "params" parameter when creating a parameter validator must be a hashref or arrayref, you passed an undef\E.+at t.self-check\.t line \d+/,
     'got expected error message when validation_for is called params as an undef'
 );
 
 like(
     dies { validation_for( params => \42 ) },
-    qr/\QThe "params" parameter when creating a parameter validator must be a hashref or arrayref, you passed a scalarref/,
+    qr/\QThe "params" parameter when creating a parameter validator must be a hashref or arrayref, you passed a scalarref\E.+at t.self-check\.t line \d+/,
     'got expected error message when validation_for is called params as a scalarref'
 );
 
 like(
     dies { validation_for( params => { a => {} }, foo => 1, bar => 2 ) },
-    qr/\QYou passed unknown parameters when creating a parameter validator: [bar foo]/,
+    qr/\QYou passed unknown parameters when creating a parameter validator: [bar foo]\E.+at t.self-check\.t line \d+/,
     'got expected error message when validation_for is called with extra unknown parameters'
 );
 
 like(
     dies { validation_for( params => { a => {} }, name => undef, ) },
-    qr/\QThe "name" parameter when creating a parameter validator must be a scalar, you passed an undef/,
+    qr/\QThe "name" parameter when creating a parameter validator must be a scalar, you passed an undef\E.+at t.self-check\.t line \d+/,
     'got expected error message when validation_for is called with name as an undef'
 );
 
 like(
     dies { validation_for( params => { a => {} }, name => [], ) },
-    qr/\QThe "name" parameter when creating a parameter validator must be a scalar, you passed a arrayref/,
+    qr/\QThe "name" parameter when creating a parameter validator must be a scalar, you passed a arrayref\E.+at t.self-check\.t line \d+/,
     'got expected error message when validation_for is called with name as an arrayref'
 );
 
@@ -57,7 +57,7 @@ like(
             slurpy                       => 1,
         );
     },
-    qr/\QYou cannot use "validate_pairs_to_value_list" and "slurpy" together/,
+    qr/\QYou cannot use "validate_pairs_to_value_list" and "slurpy" together\E.+at t.self-check\.t line \d+/,
 );
 
 done_testing();

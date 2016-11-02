@@ -3,6 +3,9 @@
 - Added C<validate_pairs_to_value_list> to support returning only the
   parameter values from the subroutine rather than the key-value pairs.
 
+- Errors from calls to validation_for() now use croak so as to show up at the
+  call site, rather than in the internals
+
 
 0.13     2016-09-16
 

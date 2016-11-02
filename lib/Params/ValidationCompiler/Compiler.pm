@@ -5,11 +5,14 @@ use warnings;
 
 our $VERSION = '0.14';
 
+use Carp qw( croak );
 use Eval::Closure qw( eval_closure );
 use List::Util 1.29 qw( pairkeys );
 use Params::ValidationCompiler::Exceptions;
 use Scalar::Util qw( blessed looks_like_number reftype );
 use overload ();
+
+our @CARP_NOT = ( 'Params::ValidationCompiler', __PACKAGE__ );
 
 BEGIN {
     ## no critic (Variables::RequireInitializationForLocalVars)
@@ -25,8 +28,8 @@ BEGIN {
 
     unless ($has_sub_util) {
         *set_subname = sub {
-            die
-                "Cannot name a generated validation subroutine. Please install Sub::Util.\n";
+            croak
+                'Cannot name a generated validation subroutine. Please install Sub::Util.';
         };
     }
 }
@@ -41,19 +44,19 @@ sub new {
     my %p     = @_;
 
     unless ( exists $p{params} ) {
-        die
-            qq{You must provide a "params" parameter when creating a parameter validator\n};
+        croak
+            q{You must provide a "params" parameter when creating a parameter validator};
     }
     if ( ref $p{params} eq 'HASH' ) {
-        die q{The "params" hashref must contain at least one key-value pair}
+        croak q{The "params" hashref must contain at least one key-value pair}
             unless %{ $p{params} };
 
-        die
+        croak
             q{"validate_pairs_to_value_list" must be used with arrayref params containing key-value pairs}
             if $p{validate_pairs_to_value_list};
     }
     elsif ( ref $p{params} eq 'ARRAY' ) {
-        die q{The "params" arrayref must contain at least one element}
+        croak q{The "params" arrayref must contain at least one element}
             unless @{ $p{params} };
     }
     else {
@@ -62,12 +65,13 @@ sub new {
             : ref $p{params} ? q{a } . ( lc ref $p{params} ) . q{ref}
             :                  'a scalar';
 
-        die
+        croak
             qq{The "params" parameter when creating a parameter validator must be a hashref or arrayref, you passed $type};
     }
 
     if ( $p{validate_pairs_to_value_list} && $p{slurpy} ) {
-        die q{You cannot use "validate_pairs_to_value_list" and "slurpy" together};
+        croak
+            q{You cannot use "validate_pairs_to_value_list" and "slurpy" together};
     }
 
     if ( exists $p{name} && ( !defined $p{name} || ref $p{name} ) ) {
@@ -76,13 +80,13 @@ sub new {
             ? 'an undef'
             : q{a } . ( lc ref $p{name} ) . q{ref};
 
-        die
+        croak
             qq{The "name" parameter when creating a parameter validator must be a scalar, you passed $type};
     }
 
     my @unknown = sort grep { !$known{$_} } keys %p;
     if (@unknown) {
-        die
+        croak
             "You passed unknown parameters when creating a parameter validator: [@unknown]";
     }
 
@@ -410,7 +414,7 @@ sub _munge_and_check_positional_params {
             $in_optional = 1;
         }
         elsif ($in_optional) {
-            die
+            croak
                 'Parameter list contains an optional parameter followed by a required parameter.';
         }
 
@@ -487,7 +491,7 @@ sub _add_default_assignment {
     my $name    = shift;
     my $default = shift;
 
-    die 'Default must be either a plain scalar or a subroutine reference'
+    croak 'Default must be either a plain scalar or a subroutine reference'
         if ref $default && reftype($default) ne 'CODE';
 
     my $qname = B::perlstring($name);
@@ -524,7 +528,7 @@ sub _add_type_check {
     my $spec   = shift;
 
     my $type = $spec->{type};
-    die "Passed a type that is not an object for $name: $type"
+    croak "Passed a type that is not an object for $name: $type"
         unless blessed $type;
 
     push @{ $self->_source }, sprintf( 'if ( exists %s ) {', $access )
@@ -556,7 +560,7 @@ sub _type_check {
         # Moose
         : $type->can('can_be_inlined')
         ? $self->_add_moose_check( $access, $name, $type )
-        : die 'Unknown type object ' . ref $type;
+        : croak 'Unknown type object ' . ref $type;
 }
 
 sub _add_type_tiny_check {
