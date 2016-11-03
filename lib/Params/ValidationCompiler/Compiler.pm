@@ -214,7 +214,7 @@ sub _compile_named_args_check_body {
             unless ( exists $spec->{optional} && $spec->{optional} )
             || exists $spec->{default};
 
-        $self->_add_default_assignment(
+        $self->_add_named_default_assignment(
             $access, $name,
             $spec->{default}
         ) if exists $spec->{default};
@@ -380,8 +380,10 @@ sub _compile_positional_args_check {
         my $name   = "Parameter $i";
         my $access = "\$_[$i]";
 
-        $self->_add_default_assignment(
-            $access, $name,
+        $self->_add_positional_default_assignment(
+            $i,
+            $access,
+            $name,
             $spec->{default}
         ) if exists $spec->{default};
 
@@ -484,17 +486,42 @@ EOF
     return;
 }
 
-sub _add_default_assignment {
+sub _add_positional_default_assignment {
+    my $self     = shift;
+    my $position = shift;
+    my $access   = shift;
+    my $name     = shift;
+    my $default  = shift;
+
+    push @{ $self->_source }, "if ( \$#_ < $position ) {";
+
+    $self->_add_shared_default_assignment( $access, $name, $default );
+    return;
+}
+
+sub _add_named_default_assignment {
     my $self    = shift;
     my $access  = shift;
     my $name    = shift;
     my $default = shift;
 
-    croak 'Default must be either a plain scalar or a subroutine reference'
-        if ref $default && reftype($default) ne 'CODE';
-
     my $qname = B::perlstring($name);
     push @{ $self->_source }, "unless ( exists \$args{$qname} ) {";
+
+    $self->_add_shared_default_assignment( $access, $name, $default );
+    return;
+}
+
+sub _add_shared_default_assignment {
+    my $self    = shift;
+    my $access  = shift;
+    my $name    = shift;
+    my $default = shift;
+
+    my $qname = B::perlstring($name);
+
+    croak 'Default must be either a plain scalar or a subroutine reference'
+        if ref $default && reftype($default) ne 'CODE';
 
     if ( ref $default ) {
         push @{ $self->_source }, "$access = \$defaults{$qname}->();";
