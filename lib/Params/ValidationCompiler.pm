@@ -54,7 +54,7 @@ __END__
             },
         );
 
-        sub do_something {
+        sub foo {
             my %args = $validator->(@_);
         }
     }
@@ -70,7 +70,7 @@ __END__
             ],
         );
 
-        sub do_something {
+        sub bar {
             my ( $int, $str ) = $validator->(@_);
         }
     }
@@ -87,7 +87,7 @@ __END__
             named_to_list => 1,
         );
 
-        sub do_something {
+        sub baz {
             my ( $foo, $bar ) = $validator->(@_);
         }
     }
