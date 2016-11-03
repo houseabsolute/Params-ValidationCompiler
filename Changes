@@ -8,7 +8,8 @@
 0.14     2016-11-02
 
 - Added a "named_to_list" option to support returning only the parameter
-  values from a named parameter validator rather than the key-value pairs.
+  values from a named parameter validator rather than the key-value
+  pairs. Implemented by Greg Oschwald. Based on PR #4.
 
 - Errors from calls to validation_for() now use croak so as to show up at the
   call site, rather than in the internals
