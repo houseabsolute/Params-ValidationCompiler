@@ -4,7 +4,7 @@ Params::ValidationCompiler - Build an optimized subroutine parameter validator o
 
 # VERSION
 
-version 0.14
+version 0.15
 
 # SYNOPSIS
 
@@ -26,7 +26,7 @@ version 0.14
             },
         );
 
-        sub do_something {
+        sub foo {
             my %args = $validator->(@_);
         }
     }
@@ -42,7 +42,7 @@ version 0.14
             ],
         );
 
-        sub do_something {
+        sub bar {
             my ( $int, $str ) = $validator->(@_);
         }
     }
@@ -59,7 +59,7 @@ version 0.14
             named_to_list => 1,
         );
 
-        sub do_something {
+        sub baz {
             my ( $foo, $bar ) = $validator->(@_);
         }
     }

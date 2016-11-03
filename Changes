@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.15     2016-11-03
+
 - Previously, using a default with a positional parameter would result in an
   error when compiling the validator subroutine. Defaults now work with
   positional parameters. Implemented by Greg Oschwald. Based on PR #5.
