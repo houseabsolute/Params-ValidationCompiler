@@ -590,6 +590,9 @@ sub _type_check {
         : croak 'Unknown type object ' . ref $type;
 }
 
+# From reading through the Type::Tiny source, I can't see any cases where a
+# Type::Tiny type or coercion needs to provide any environment variables to
+# compile with.
 sub _add_type_tiny_check {
     my $self   = shift;
     my $access = shift;
@@ -644,12 +647,24 @@ sub _add_specio_check {
         if ( $type->has_coercions ) {
             my ( $source, $env ) = $type->inline_coercion_and_check($access);
             push @source, sprintf( '%s = %s;', $access, $source );
-            $self->_env->{$_} = $env->{$_} for keys %{$env};
+            $self->_add_to_environment(
+                sprintf(
+                    'The inline_coercion_and_check for %s ',
+                    $type->_description
+                ),
+                $env,
+            );
         }
         else {
             my ( $source, $env ) = $type->inline_assert($access);
             push @source, $source . ';';
-            $self->_env->{$_} = $env->{$_} for keys %{$env};
+            $self->_add_to_environment(
+                sprintf(
+                    'The inline_assert for %s ',
+                    $type->_description
+                ),
+                $env,
+            );
         }
     }
     else {
@@ -665,6 +680,15 @@ sub _add_specio_check {
                     $c->inline_coercion($access),
                     $c->from->inline_check($access)
                     );
+                $self->_add_to_environment(
+                    sprintf(
+                        'The inline_coercion for %s ',
+                        $c->_description
+                    ),
+
+                    # This should really be public in Specio
+                    $c->_inline_environment,
+                );
             }
             else {
                 push @source,
@@ -686,6 +710,7 @@ sub _add_specio_check {
             '$types{%s}->validate_or_die(%s);', $name,
             $access
             );
+
         $self->_env->{'%types'}{$name} = $type;
     }
 
@@ -742,7 +767,32 @@ EOF
         $access,
     );
 
+    if ( $type->can_be_inlined ) {
+        $self->_add_to_environment(
+            sprintf( 'The %s type', $type->name ),
+            $type->_inline_environment,
+        );
+    }
+
     return @source;
+}
+
+sub _add_to_environment {
+    my $self    = shift;
+    my $what    = shift;
+    my $new_env = shift;
+
+    my $env = $self->_env;
+    for my $key ( keys %{$new_env} ) {
+        if ( exists $env->{$key} ) {
+            croak sprintf(
+                      '%s has an inline environment variable named %s'
+                    . ' that conflicts with a variable already in the environment',
+                $what, $key
+            );
+        }
+        $self->_env->{$key} = $new_env->{$key};
+    }
 }
 
 1;

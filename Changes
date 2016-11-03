@@ -1,5 +1,11 @@
 {{$NEXT}}
 
+- Moose and Specio types (and coercions) which provide variables to close over
+  when being inlined did not always compile properly. Most notable, this was
+  not being handled at all for Moose types, and not completely handled for
+  Specio coercions.
+
+
 0.15     2016-11-03
 
 - Previously, using a default with a positional parameter would result in an
