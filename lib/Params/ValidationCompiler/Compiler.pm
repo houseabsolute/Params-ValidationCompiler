@@ -3,7 +3,7 @@ package Params::ValidationCompiler::Compiler;
 use strict;
 use warnings;
 
-our $VERSION = '0.17';
+our $VERSION = '0.18';
 
 use Carp qw( croak );
 use Eval::Closure qw( eval_closure );
