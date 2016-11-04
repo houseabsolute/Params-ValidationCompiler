@@ -30,7 +30,21 @@ use Specio::Library::Builtins;
         [ 3, undef ],
         'default is only set when element does not exist'
     );
+}
 
+{
+    my $validator = validation_for(
+        params => [
+            1,
+            { default => 0 },
+        ],
+    );
+
+    is(
+        [ $validator->(0) ],
+        [ 0, 0 ],
+        'positional params with default are optional'
+    );
 }
 
 done_testing();

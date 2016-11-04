@@ -358,7 +358,7 @@ sub _compile_positional_args_check {
 
     my $first_optional_idx = -1;
     for my $i ( 0 .. $#specs ) {
-        next unless $specs[$i]{optional};
+        next unless $specs[$i]{optional} || exists $specs[$i]{default};
         $first_optional_idx = $i;
         last;
     }
