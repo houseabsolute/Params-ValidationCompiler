@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.17     2016-11-04
+
 - When using positional parameters, parameters with a default are now
   optional. For named parameters, this was already the case.
 
