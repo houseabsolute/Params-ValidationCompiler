@@ -10,9 +10,8 @@ use Specio::Library::Builtins;
 {
     my $validator = validation_for(
         params => [
-            { isa => t('Int') },
+            { type => t('Int') },
             {
-                isa      => t('Bool'),
                 default  => 10,
                 optional => 1,
             },
