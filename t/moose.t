@@ -115,4 +115,13 @@ sub _test_int_to_arrayref_coercion {
         qr/\QValidation failed for '$name' with value \E(?:HASH|\{ +\})/,
         'dies when foo is a hashref'
     );
+
+    my $pos = validation_for(
+        params => [ { type => $type } ],
+    );
+    is(
+        dies { $pos->(42) },
+        undef,
+        'lives when coercing a moose type with positional parameters'
+    );
 }

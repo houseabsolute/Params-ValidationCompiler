@@ -119,6 +119,46 @@ sub _env { $_[0]->{_env} }
 
 sub named_to_list { $_[0]->{named_to_list} }
 
+sub _any_type_has_coercion {
+    my $self = shift;
+
+    return $self->{_has_coercion} if exists $self->{_has_coercion};
+
+    for my $type ( $self->_types ) {
+
+        # Specio
+        if ( $type->can('has_coercions') && $type->has_coercions ) {
+            return $self->{_has_coercion} = 1;
+        }
+
+        # Moose and Type::Tiny
+        elsif ( $type->can('has_coercion') && $type->has_coercion ) {
+            return $self->{_has_coercion} = 1;
+        }
+    }
+
+    return $self->{_has_coercion} = 0;
+}
+
+sub _types {
+    my $self = shift;
+
+    if ( ref $self->params eq 'HASH' ) {
+        return map { $_->{type} || () }
+            grep { ref $_ } values %{ $self->params };
+    }
+    elsif ( ref $self->params eq 'ARRAY' ) {
+        if ( $self->named_to_list ) {
+            my %p = @{ $self->params };
+            return map { $_->{type} || () } grep { ref $_ } values %p;
+        }
+        else {
+            return
+                map { $_->{type} || () } grep { ref $_ } @{ $self->params };
+        }
+    }
+}
+
 sub subref {
     my $self = shift;
 
@@ -375,11 +415,17 @@ sub _compile_positional_args_check {
     $self->_add_check_for_extra_positional_params( scalar @specs )
         unless $self->slurpy;
 
+    my $access_var = '$_';
+    if ( $self->_any_type_has_coercion ) {
+        push @{ $self->_source }, 'my @copy = @_;';
+        $access_var = '$copy';
+    }
+
     for my $i ( 0 .. $#specs ) {
         my $spec = $specs[$i];
 
-        my $name   = "Parameter $i";
-        my $access = "\$_[$i]";
+        my $name = "Parameter $i";
+        my $access = sprintf( '%s[%i]', $access_var, $i );
 
         $self->_add_positional_default_assignment(
             $i,
@@ -599,6 +645,8 @@ sub _add_type_tiny_check {
     my $name   = shift;
     my $type   = shift;
 
+    my $qname = B::perlstring($name);
+
     my @source;
     if ( $type->has_coercion ) {
         my $coercion = $type->coercion;
@@ -612,7 +660,7 @@ sub _add_type_tiny_check {
             push @source,
                 sprintf(
                 '%s = $tt_coercions{%s}->( %s );',
-                $access, $name, $access,
+                $access, $qname, $access,
                 );
         }
     }
@@ -624,8 +672,8 @@ sub _add_type_tiny_check {
     else {
         push @source,
             sprintf(
-            '$types{%s}->assert_valid( %s );', $name,
-            $access
+            '$types{%s}->assert_valid( %s );',
+            $qname, $access,
             );
         $self->_env->{'%types'}{$name} = $type;
     }
@@ -723,6 +771,8 @@ sub _add_moose_check {
     my $name   = shift;
     my $type   = shift;
 
+    my $qname = B::perlstring($name);
+
     my @source;
 
     if ( $type->has_coercion ) {
@@ -730,7 +780,7 @@ sub _add_moose_check {
         push @source,
             sprintf(
             '%s = $moose_coercions{%s}->coerce( %s );',
-            $access, $name, $access,
+            $access, $qname, $access,
             );
     }
 
@@ -756,9 +806,8 @@ EOF
     my $check
         = $type->can_be_inlined
         ? $type->_inline_check($access)
-        : sprintf( '$types{%s}->check( %s )', $name, $access );
+        : sprintf( '$types{%s}->check( %s )', $qname, $access );
 
-    my $qname = B::perlstring($name);
     push @source, sprintf(
         $code,
         $check,

@@ -1,5 +1,15 @@
 {{$NEXT}}
 
+- Using coercions with positional parameters could cause a "Modification of a
+  read-only value attempted" exception when the generated code tried to assign
+  to elements of @_. This is now fixed by making a copy if any of the types
+  have a coercion.
+
+- Using Moose types with coercions in a positional params check would cause
+  invalid code to be generated. This could also happen with Type::Tiny if
+  either the type or a coercion could not be inlined.
+
+
 0.17     2016-11-04
 
 - When using positional parameters, parameters with a default are now
