@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.18     2016-11-13
+
 - Using coercions with positional parameters could cause a "Modification of a
   read-only value attempted" exception when the generated code tried to assign
   to elements of @_. This is now fixed by making a copy if any of the types
