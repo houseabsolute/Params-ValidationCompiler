@@ -416,9 +416,11 @@ sub _compile_positional_args_check {
         unless $self->slurpy;
 
     my $access_var = '$_';
+    my $return_var = '@_';
     if ( $self->_any_type_has_coercion ) {
         push @{ $self->_source }, 'my @copy = @_;';
         $access_var = '$copy';
+        $return_var = '@copy';
     }
 
     for my $i ( 0 .. $#specs ) {
@@ -445,7 +447,7 @@ sub _compile_positional_args_check {
         );
     }
 
-    push @{ $self->_source }, 'return @_;';
+    push @{ $self->_source }, sprintf( 'return %s;', $return_var );
 
     return;
 }

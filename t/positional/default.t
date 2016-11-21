@@ -13,8 +13,7 @@ use Specio::Library::Builtins;
         params => [
             { type => t('Int') },
             {
-                default  => 10,
-                optional => 1,
+                default => 10,
             },
         ],
     );
@@ -44,6 +43,63 @@ use Specio::Library::Builtins;
         [ $validator->(0) ],
         [ 0, 0 ],
         'positional params with default are optional'
+    );
+}
+
+{
+    my $x         = 1;
+    my $validator = validation_for(
+        params => [
+            1,
+            {
+                default => sub { $x++ }
+            },
+        ],
+    );
+
+    is(
+        [ $validator->(0) ],
+        [ 0, 1 ],
+        'default sub for positional params is called'
+    );
+    is(
+        [ $validator->(0) ],
+        [ 0, 2 ],
+        'default sub for positional params is called again'
+    );
+}
+
+{
+    declare(
+        'UCStr',
+        parent => t('Str'),
+        where  => sub { $_[0] =~ /^[A-Z]+$/ },
+    );
+    coerce(
+        t('UCStr'),
+        from  => t('Str'),
+        using => sub { uc $_[0] },
+    );
+
+    my $validator = validation_for(
+        params => [
+            1,
+            {
+                type    => t('UCStr'),
+                default => sub {'ABC'}
+            },
+        ],
+    );
+
+    is(
+        [ $validator->( 0, 'xyz' ) ],
+        [ 0, 'XYZ' ],
+        'coercion for positional param is called'
+    );
+    is(
+        [ $validator->(0) ],
+        [ 0, 'ABC' ],
+        'default for position param with coercion is called'
     );
 }
 

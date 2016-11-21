@@ -3,6 +3,9 @@
 - Non-inlinable Specio types caused a syntax error when used with positional
   params.
 
+- Positional params with coercions and defaults did not work properly. The
+  coerced value and the default would simply not be returned in any case.
+
 
 0.18     2016-11-13
 
