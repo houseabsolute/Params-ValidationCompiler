@@ -1,5 +1,9 @@
 {{$NEXT}}
 
+- Non-inlinable Specio types caused a syntax error when used with positional
+  params.
+
+
 0.18     2016-11-13
 
 - Using coercions with positional parameters could cause a "Modification of a

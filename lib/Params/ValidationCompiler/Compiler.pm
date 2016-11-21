@@ -755,8 +755,8 @@ sub _add_specio_check {
 
         push @source,
             sprintf(
-            '$types{%s}->validate_or_die(%s);', $name,
-            $access
+            '$types{%s}->validate_or_die(%s);',
+            $qname, $access,
             );
 
         $self->_env->{'%types'}{$name} = $type;
