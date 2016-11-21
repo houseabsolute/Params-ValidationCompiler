@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.19     2016-11-21
+
 - Non-inlinable Specio types caused a syntax error when used with positional
   params.
 
