@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.20     2016-12-05
+
 - The keys for parameter specifications are now validated. If an unknown key
   is seen then an exception will be thrown. This will help you catch typos in
   your parameter specification. Implemented by Greg Oschwald. PR #8.
