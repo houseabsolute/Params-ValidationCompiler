@@ -58,6 +58,38 @@ like(
         );
     },
     qr/\QYou cannot use "named_to_list" and "slurpy" together\E.+at t.self-check\.t line \d+/,
+    'got expected error message when validation_for is called with named_to_list and slurpy'
+);
+
+like(
+    dies {
+        validation_for(
+            params        => [ a => { isa => 1, typo => 2 } ],
+            named_to_list => 1,
+        );
+    },
+    qr/\QSpecification contains unknown keys: [isa typo]\E.+at t.self-check\.t line \d+/,
+    'got expected error message when validation_for is called with named_to_list and an invalid spec keys'
+);
+
+like(
+    dies {
+        validation_for(
+            params => [ { isa => 1, } ],
+        );
+    },
+    qr/\QSpecification contains unknown keys: [isa]\E.+at t.self-check\.t line \d+/,
+    'got expected error message when validation_for is called with an arrayref params and an invalid spec keys'
+);
+
+like(
+    dies {
+        validation_for(
+            params => { a => { isa => 1, typo => 2 } },
+        );
+    },
+    qr/\QSpecification contains unknown keys: [isa typo]\E.+at t.self-check\.t line \d+/,
+    'got expected error message when validation_for is called with an hashref params and an invalid spec keys'
 );
 
 done_testing();

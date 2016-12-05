@@ -7,7 +7,7 @@ our $VERSION = '0.20';
 
 use Carp qw( croak );
 use Eval::Closure qw( eval_closure );
-use List::Util 1.29 qw( pairkeys );
+use List::Util 1.29 qw( pairkeys pairvalues );
 use Params::ValidationCompiler::Exceptions;
 use Scalar::Util qw( blessed looks_like_number reftype );
 use overload ();
@@ -54,10 +54,19 @@ sub new {
         croak
             q{"named_to_list" must be used with arrayref params containing key-value pairs}
             if $p{named_to_list};
+
+        $class->_validate_param_spec($_) for values %{ $p{params} };
     }
     elsif ( ref $p{params} eq 'ARRAY' ) {
         croak q{The "params" arrayref must contain at least one element}
             unless @{ $p{params} };
+
+        my @specs
+            = $p{named_to_list}
+            ? pairvalues @{ $p{params} }
+            : @{ $p{params} };
+
+        $class->_validate_param_spec($_) for @specs;
     }
     else {
         my $type
@@ -95,6 +104,31 @@ sub new {
     $self->{_env}    = {};
 
     return $self;
+}
+
+{
+    my %known_keys = (
+        default  => 1,
+        optional => 1,
+        type     => 1,
+    );
+
+    sub _validate_param_spec {
+        shift;
+        my $spec = shift;
+
+        my $ref = ref $spec;
+        return unless $ref;
+
+        croak
+            "Specifications must be a scalar or hashref, but received a $ref"
+            unless $ref eq 'HASH';
+
+        my @unknown = sort grep { !$known_keys{$_} } keys %{$spec};
+        if (@unknown) {
+            croak "Specification contains unknown keys: [@unknown]";
+        }
+    }
 }
 
 sub name      { $_[0]->{name} }
