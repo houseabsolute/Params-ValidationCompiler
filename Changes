@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+- Switched to using GitHub issues.
+
+
 0.20     2016-12-05
 
 - The keys for parameter specifications are now validated. If an unknown key
