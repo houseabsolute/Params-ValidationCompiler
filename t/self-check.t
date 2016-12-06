@@ -6,6 +6,7 @@ use Test2::Bundle::Extended;
 use Test2::Plugin::NoWarnings;
 
 use Params::ValidationCompiler qw( validation_for );
+use Specio::Library::Builtins;
 
 like(
     dies { validation_for() },
@@ -90,6 +91,15 @@ like(
     },
     qr/\QSpecification contains unknown keys: [isa typo]\E.+at t.self-check\.t line \d+/,
     'got expected error message when validation_for is called with an hashref params and an invalid spec keys'
+);
+like(
+    dies {
+        validation_for(
+            params => { foo => t('Int') },
+        );
+    },
+    qr/\QSpecifications must be a scalar or hashref, but received a Specio::Constraint::Simple/,
+    'got expected error message when validation_for is called with a spec that is a type instead of a hashref'
 );
 
 done_testing();
