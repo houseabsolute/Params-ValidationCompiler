@@ -4,7 +4,7 @@ Params::ValidationCompiler - Build an optimized subroutine parameter validator o
 
 # VERSION
 
-version 0.20
+version 0.21
 
 # SYNOPSIS
 
@@ -182,8 +182,7 @@ passed to [Eval::Closure](https://metacpan.org/pod/Eval::Closure).
 
 # SUPPORT
 
-Bugs may be submitted through [the RT bug tracker](http://rt.cpan.org/Public/Dist/Display.html?Name=Params-ValidationCompiler)
-(or [bug-params-validationcompiler@rt.cpan.org](mailto:bug-params-validationcompiler@rt.cpan.org)).
+Bugs may be submitted through [https://github.com/houseabsolute/Params-ValidationCompiler/issues](https://github.com/houseabsolute/Params-ValidationCompiler/issues).
 
 I am also usually active on IRC as 'autarch' on `irc://irc.perl.org`.
 
