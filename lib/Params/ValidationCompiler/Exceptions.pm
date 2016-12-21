@@ -47,7 +47,7 @@ Exception thrown when @_ contains unexpected extra named arguments.
 
 Exception thrown when a required named parameter is not passed.
 
-=head2 Params::ValidationCompiler::Exception::Positional::Extra.
+=head2 Params::ValidationCompiler::Exception::Positional::Extra
 
 Exception thrown when @_ contains unexpected extra arguments.
 
