@@ -11,6 +11,7 @@ use List::Util 1.29 qw( pairkeys pairvalues );
 use Params::ValidationCompiler::Exceptions;
 use Scalar::Util qw( blessed looks_like_number reftype );
 use overload ();
+use B qw( perlstring );
 
 our @CARP_NOT = ( 'Params::ValidationCompiler', __PACKAGE__ );
 
@@ -253,7 +254,7 @@ sub _compile_named_args_list_check {
 
     $self->_compile_named_args_check_body( { @{ $self->params } } );
 
-    my @keys = map { B::perlstring($_) } pairkeys @{ $self->params };
+    my @keys = map { perlstring($_) } pairkeys @{ $self->params };
 
     # If we don't handle the one-key case specially we end up getting a
     # warning like "Scalar value @args{"bar"} better written as $args{"bar"}
@@ -279,7 +280,7 @@ sub _compile_named_args_check_body {
         my $spec = $params->{$name};
         $spec = { optional => !$spec } unless ref $spec;
 
-        my $qname  = B::perlstring($name);
+        my $qname  = perlstring($name);
         my $access = "\$args{$qname}";
 
         # We check exists $spec->{optional} so as not to blow up on a
@@ -368,7 +369,7 @@ sub _add_check_for_required_named_param {
     my $access = shift;
     my $name   = shift;
 
-    my $qname = B::perlstring($name);
+    my $qname = perlstring($name);
     push @{ $self->_source },
         sprintf( <<'EOF', $access, ($qname) x 2 );
 exists %s
@@ -589,7 +590,7 @@ sub _add_named_default_assignment {
     my $name    = shift;
     my $default = shift;
 
-    my $qname = B::perlstring($name);
+    my $qname = perlstring($name);
     push @{ $self->_source }, "unless ( exists \$args{$qname} ) {";
     $self->_add_shared_default_assignment( $access, $name, $default );
     push @{ $self->_source }, '}';
@@ -603,7 +604,7 @@ sub _add_shared_default_assignment {
     my $name    = shift;
     my $default = shift;
 
-    my $qname = B::perlstring($name);
+    my $qname = perlstring($name);
 
     croak 'Default must be either a plain scalar or a subroutine reference'
         if ref $default && reftype($default) ne 'CODE';
@@ -619,7 +620,7 @@ sub _add_shared_default_assignment {
             }
             else {
                 push @{ $self->_source },
-                    "$access = " . B::perlstring($default) . ';';
+                    "$access = " . perlstring($default) . ';';
             }
         }
         else {
@@ -681,7 +682,7 @@ sub _add_type_tiny_check {
     my $name   = shift;
     my $type   = shift;
 
-    my $qname = B::perlstring($name);
+    my $qname = perlstring($name);
 
     my @source;
     if ( $type->has_coercion ) {
@@ -723,7 +724,7 @@ sub _add_specio_check {
     my $name   = shift;
     my $type   = shift;
 
-    my $qname = B::perlstring($name);
+    my $qname = perlstring($name);
 
     my @source;
 
@@ -807,7 +808,7 @@ sub _add_moose_check {
     my $name   = shift;
     my $type   = shift;
 
-    my $qname = B::perlstring($name);
+    my $qname = perlstring($name);
 
     my @source;
 

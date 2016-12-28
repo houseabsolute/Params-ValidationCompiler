@@ -1,3 +1,4 @@
+requires "B" => "0";
 requires "Carp" => "0";
 requires "Eval::Closure" => "0";
 requires "Exception::Class" => "0";
