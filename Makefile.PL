@@ -16,6 +16,7 @@ my %WriteMakefileArgs = (
   "LICENSE" => "artistic_2",
   "NAME" => "Params::ValidationCompiler",
   "PREREQ_PM" => {
+    "B" => 0,
     "Carp" => 0,
     "Eval::Closure" => 0,
     "Exception::Class" => 0,
@@ -45,6 +46,7 @@ my %WriteMakefileArgs = (
 
 
 my %FallbackPrereqs = (
+  "B" => 0,
   "Carp" => 0,
   "Eval::Closure" => 0,
   "Exception::Class" => 0,

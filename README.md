@@ -4,7 +4,7 @@ Params::ValidationCompiler - Build an optimized subroutine parameter validator o
 
 # VERSION
 
-version 0.21
+version 0.22
 
 # SYNOPSIS
 
@@ -65,8 +65,6 @@ version 0.21
     }
 
 # DESCRIPTION
-
-**This is still fairly alpha. Things could change. You have been warned.**
 
 This module creates a customized, highly efficient parameter checking
 subroutine. It can handle named or positional parameters, and can return the
@@ -207,9 +205,10 @@ button at [http://www.urth.org/~autarch/fs-donation.html](http://www.urth.org/~a
 
 Dave Rolsky <autarch@urth.org>
 
-# CONTRIBUTOR
+# CONTRIBUTORS
 
-Gregory Oschwald <goschwald@maxmind.com>
+- Gregory Oschwald <goschwald@maxmind.com>
+- Tomasz Konojacki <me@xenu.pl>
 
 # COPYRIGHT AND LICENSE
 
