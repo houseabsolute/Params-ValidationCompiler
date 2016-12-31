@@ -94,8 +94,6 @@ __END__
 
 =head1 DESCRIPTION
 
-B<This is still fairly alpha. Things could change. You have been warned.>
-
 This module creates a customized, highly efficient parameter checking
 subroutine. It can handle named or positional parameters, and can return the
 parameters as key/value pairs or a list of values.
