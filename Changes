@@ -1,5 +1,11 @@
 {{$NEXT}}
 
+- Explicitly load the B module. Previously the code relied on this already
+  being loaded by something else. Fixed by Tomasz Konojacki. PR #11.
+
+- Removed the alpha warning from the docs.
+
+
 0.21     2016-12-06
 
 - Switched to using GitHub issues.
