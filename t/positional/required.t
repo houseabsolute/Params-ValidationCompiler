@@ -37,4 +37,32 @@ use Specio::Library::Builtins;
     );
 }
 
+{
+    like(
+        dies {
+            validation_for(
+                params => [
+                    { optional => 1 },
+                    { type     => t('Int') },
+                ],
+            );
+        },
+        qr/\QParameter list contains an optional parameter followed by a required parameter/,
+        'cann have positional parameters where an optional param comes before a required one'
+    );
+
+    like(
+        dies {
+            validation_for(
+                params => [
+                    { default => 42 },
+                    { type    => t('Int') },
+                ],
+            );
+        },
+        qr/\QParameter list contains an optional parameter followed by a required parameter/,
+        'cann have positional parameters where a param with a default comes before a required one'
+    );
+}
+
 done_testing();

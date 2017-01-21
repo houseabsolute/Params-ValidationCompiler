@@ -494,7 +494,7 @@ sub _munge_and_check_positional_params {
 
     for my $spec ( @{ $self->params } ) {
         $spec = ref $spec ? $spec : { optional => !$spec };
-        if ( $spec->{optional} ) {
+        if ( $spec->{optional} || exists $spec->{default} ) {
             $in_optional = 1;
         }
         elsif ($in_optional) {

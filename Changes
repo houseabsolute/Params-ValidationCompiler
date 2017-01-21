@@ -1,5 +1,9 @@
 {{$NEXT}}
 
+- Trying to create a validator for positional parameters where a required
+  param came after one with a default did not throw an exception.
+
+
 0.22     2016-12-31
 
 - Explicitly load the B module. Previously the code relied on this already
