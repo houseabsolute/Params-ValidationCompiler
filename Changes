@@ -3,6 +3,9 @@
 - Trying to create a validator for positional parameters where a required
   param came after one with a default did not throw an exception.
 
+- A positional params validator with a slurpy type which had coercions did not
+  return the coerced values. It returned the original values instead.
+
 
 0.22     2016-12-31
 

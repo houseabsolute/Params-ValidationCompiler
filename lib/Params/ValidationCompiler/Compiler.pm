@@ -178,20 +178,25 @@ sub _any_type_has_coercion {
 sub _types {
     my $self = shift;
 
+    my @types;
     if ( ref $self->params eq 'HASH' ) {
-        return map { $_->{type} || () }
+        @types = map { $_->{type} || () }
             grep { ref $_ } values %{ $self->params };
     }
     elsif ( ref $self->params eq 'ARRAY' ) {
         if ( $self->named_to_list ) {
             my %p = @{ $self->params };
-            return map { $_->{type} || () } grep { ref $_ } values %p;
+            @types = map { $_->{type} || () } grep { ref $_ } values %p;
         }
         else {
-            return
-                map { $_->{type} || () } grep { ref $_ } @{ $self->params };
+            @types
+                = map { $_->{type} || () } grep { ref $_ } @{ $self->params };
         }
     }
+
+    push @types, $self->slurpy if $self->slurpy && ref $self->slurpy;
+
+    return @types;
 }
 
 sub subref {
@@ -478,6 +483,7 @@ sub _compile_positional_args_check {
         $self->_add_check_for_extra_positional_param_types(
             scalar @specs,
             $self->slurpy,
+            $access_var,
         );
     }
 
@@ -528,14 +534,15 @@ EOF
 }
 
 sub _add_check_for_extra_positional_param_types {
-    my $self = shift;
-    my $max  = shift;
-    my $type = shift;
+    my $self       = shift;
+    my $max        = shift;
+    my $type       = shift;
+    my $access_var = shift;
 
     # We need to set the name argument to something that won't conflict with
     # names someone would actually use for a parameter.
     my $check = join q{}, $self->_type_check(
-        '$_[$i]',
+        sprintf( '%s[$i]', $access_var ),
         '__PCC extra parameters__',
         $type,
     );
