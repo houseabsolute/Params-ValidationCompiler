@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.23     2017-01-23
+
 - Trying to create a validator for positional parameters where a required
   param came after one with a default did not throw an exception.
 
