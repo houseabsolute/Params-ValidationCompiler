@@ -4,7 +4,7 @@ Params::ValidationCompiler - Build an optimized subroutine parameter validator o
 
 # VERSION
 
-version 0.22
+version 0.23
 
 # SYNOPSIS
 
@@ -180,9 +180,13 @@ passed to [Eval::Closure](https://metacpan.org/pod/Eval::Closure).
 
 # SUPPORT
 
-Bugs may be submitted through [https://github.com/houseabsolute/Params-ValidationCompiler/issues](https://github.com/houseabsolute/Params-ValidationCompiler/issues).
+Bugs may be submitted at [https://github.com/houseabsolute/Params-ValidationCompiler/issues](https://github.com/houseabsolute/Params-ValidationCompiler/issues).
 
 I am also usually active on IRC as 'autarch' on `irc://irc.perl.org`.
+
+# SOURCE
+
+The source code repository for Params-ValidationCompiler can be found at [https://github.com/houseabsolute/Params-ValidationCompiler](https://github.com/houseabsolute/Params-ValidationCompiler).
 
 # DONATIONS
 
@@ -212,8 +216,11 @@ Dave Rolsky <autarch@urth.org>
 
 # COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2016 by Dave Rolsky.
+This software is Copyright (c) 2016 - 2017 by Dave Rolsky.
 
 This is free software, licensed under:
 
     The Artistic License 2.0 (GPL Compatible)
+
+The full text of the license can be found in the
+`LICENSE` file included with this distribution.
