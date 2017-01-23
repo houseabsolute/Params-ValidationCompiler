@@ -7,7 +7,6 @@ use Test2::Plugin::NoWarnings;
 use Test2::Require::Perl '5.012';
 
 use Hash::Merge qw( merge );
-use List::Gather;
 use List::AllUtils qw( first_index reduce );
 use Params::ValidationCompiler qw( validation_for );
 use Set::Scalar;
@@ -311,92 +310,93 @@ sub _one_param_permutations {
         'subroutine'    => sub {42},
     );
 
-    return gather {
-        for my $t ( sort keys %types ) {
-            for my $o ( sort keys %optional ) {
-                for my $d ( sort keys %default ) {
-                    my $desc = "type = $t";
+    my %perms;
 
-                    my %spec;
-                    my %tests = (
-                        (
-                            $t eq 'no type'
-                            ? 'any value is accepted'
-                            : 'value passes type check'
-                        ) => {
-                            named => {
-                                input  => { $key => 700 },
-                                output => { $key => 700 },
-                            },
-                            pos => {
-                                input  => [700],
-                                output => [700],
-                            },
+    for my $t ( sort keys %types ) {
+        for my $o ( sort keys %optional ) {
+            for my $d ( sort keys %default ) {
+                my $desc = "type = $t";
+
+                my %spec;
+                my %tests = (
+                    (
+                        $t eq 'no type'
+                        ? 'any value is accepted'
+                        : 'value passes type check'
+                    ) => {
+                        named => {
+                            input  => { $key => 700 },
+                            output => { $key => 700 },
                         },
-                    );
+                        pos => {
+                            input  => [700],
+                            output => [700],
+                        },
+                    },
+                );
 
-                    if ( $t =~ /coercion/ ) {
-                        $tests{'value is coerced'} = {
-                            named => {
-                                input  => { $key => [ 1 .. 4 ] },
-                                output => { $key => 4 },
-                            },
-                            pos => {
-                                input => [ [ 1 .. 4 ] ],
-                                output => [4],
-                            },
-                        };
+                if ( $t =~ /coercion/ ) {
+                    $tests{'value is coerced'} = {
+                        named => {
+                            input  => { $key => [ 1 .. 4 ] },
+                            output => { $key => 4 },
+                        },
+                        pos => {
+                            input => [ [ 1 .. 4 ] ],
+                            output => [4],
+                        },
+                    };
+                }
+
+                if ( $optional{$o} ) {
+                    $spec{optional} = 1;
+                    $desc .= "; $o";
+
+                    $tests{'no value given for optional param'} = {
+                        named => {
+                            input  => {},
+                            output => {},
+                        },
+                        pos => {
+                            input  => [],
+                            output => [],
+                        }
+                    };
+                }
+                else {
+                    $spec{default} = $default{$d} if $default{$d};
+
+                    if ( $d eq 'none' ) {
+                        $desc .= "; $o; default = $d";
                     }
-
-                    if ( $optional{$o} ) {
-                        $spec{optional} = 1;
-                        $desc .= "; $o";
-
-                        $tests{'no value given for optional param'} = {
+                    else {
+                        $tests{'no value given for param with default'} = {
                             named => {
                                 input  => {},
-                                output => {},
+                                output => { $key => 42 },
                             },
                             pos => {
                                 input  => [],
-                                output => [],
+                                output => [42],
                             }
                         };
+
+                        $desc .= "; default = $d";
                     }
-                    else {
-                        $spec{default} = $default{$d} if $default{$d};
-
-                        if ( $d eq 'none' ) {
-                            $desc .= "; $o; default = $d";
-                        }
-                        else {
-                            $tests{'no value given for param with default'}
-                                = {
-                                named => {
-                                    input  => {},
-                                    output => { $key => 42 },
-                                },
-                                pos => {
-                                    input  => [],
-                                    output => [42],
-                                }
-                                };
-
-                            $desc .= "; default = $d";
-                        }
-                    }
-
-                    $spec{type} = $types{$t} if $types{$t};
-
-                    take $desc => {
-                        key   => $key,
-                        spec  => \%spec,
-                        tests => \%tests,
-                    };
                 }
+
+                $spec{type} = $types{$t} if $types{$t};
+
+                $perms{$desc} = {
+                    key   => $key,
+                    spec  => \%spec,
+                    tests => \%tests,
+                };
             }
         }
-    };
+    }
+
+    return %perms;
 }
 
 sub _slurpy_param_permutations {
@@ -407,50 +407,52 @@ sub _slurpy_param_permutations {
         _one_type_permutations(),
     );
 
-    return gather {
-        for my $t ( sort keys %types ) {
-            my $desc = "type = $t";
+    my %perms;
 
-            my %spec;
-            my %tests = (
-                (
-                    $t eq 'no type'
-                    ? 'any value is accepted'
-                    : 'value passes type check'
-                ) => {
-                    named => {
-                        input  => { $key => 700 },
-                        output => { $key => 700 },
-                    },
-                    pos => {
-                        input  => [700],
-                        output => [700],
-                    },
+    for my $t ( sort keys %types ) {
+        my $desc = "type = $t";
+
+        my %spec;
+        my %tests = (
+            (
+                $t eq 'no type'
+                ? 'any value is accepted'
+                : 'value passes type check'
+            ) => {
+                named => {
+                    input  => { $key => 700 },
+                    output => { $key => 700 },
                 },
-            );
+                pos => {
+                    input  => [700],
+                    output => [700],
+                },
+            },
+        );
 
-            if ( $t =~ /coercion/ ) {
-                $tests{'value is coerced'} = {
-                    named => {
-                        input  => { $key => [ 1 .. 4 ] },
-                        output => { $key => 4 },
-                    },
-                    pos => {
-                        input => [ [ 1 .. 4 ] ],
-                        output => [4],
-                    },
-                };
-            }
-
-            $spec{type} = $types{$t} if $types{$t};
-
-            take $desc => {
-                key   => $key,
-                spec  => \%spec,
-                tests => \%tests,
+        if ( $t =~ /coercion/ ) {
+            $tests{'value is coerced'} = {
+                named => {
+                    input  => { $key => [ 1 .. 4 ] },
+                    output => { $key => 4 },
+                },
+                pos => {
+                    input => [ [ 1 .. 4 ] ],
+                    output => [4],
+                },
             };
         }
-    };
+
+        $spec{type} = $types{$t} if $types{$t};
+
+        $spec{$desc} = {
+            key   => $key,
+            spec  => \%spec,
+            tests => \%tests,
+        };
+    }
+
+    return %perms;
 }
 
 sub _one_type_permutations {
@@ -467,18 +469,20 @@ sub _one_type_permutations {
         'inlinable type with closed-over variables' => 'closure_inl_env_type',
     );
 
-    return gather {
-        for my $flavor (qw( Moose TT Specio )) {
-            my $pkg = '_Types::' . $flavor;
+    my %perms;
 
-            for my $k ( sort keys %subs ) {
-                my $s = $subs{$k};
-                next unless $pkg->can($s);
+    for my $flavor (qw( Moose TT Specio )) {
+        my $pkg = '_Types::' . $flavor;
 
-                take "$flavor - $k" => $pkg->$s();
-            }
+        for my $k ( sort keys %subs ) {
+            my $s = $subs{$k};
+            next unless $pkg->can($s);
+
+            $perms{"$flavor - $k"} = $pkg->$s();
         }
-    };
+    }
+
+    return %perms;
 }
 
 ## no critic (Modules::ProhibitMultiplePackages)
