@@ -48,7 +48,7 @@ use Specio::Library::Builtins;
             );
         },
         qr/\QParameter list contains an optional parameter followed by a required parameter/,
-        'cann have positional parameters where an optional param comes before a required one'
+        'cannot have positional parameters where an optional param comes before a required one'
     );
 
     like(
@@ -61,7 +61,7 @@ use Specio::Library::Builtins;
             );
         },
         qr/\QParameter list contains an optional parameter followed by a required parameter/,
-        'cann have positional parameters where a param with a default comes before a required one'
+        'cannot have positional parameters where a param with a default comes before a required one'
     );
 }
 
