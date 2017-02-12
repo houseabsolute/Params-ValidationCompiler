@@ -291,7 +291,8 @@ sub _compile_named_args_check_body {
         # We check exists $spec->{optional} so as not to blow up on a
         # restricted hash.
         $self->_add_check_for_required_named_param( $access, $name )
-            unless $spec->{optional} || exists $spec->{default};
+            unless ( exists $spec->{optional} && $spec->{optional} )
+            || exists $spec->{default};
 
         $self->_add_named_default_assignment(
             $access,
