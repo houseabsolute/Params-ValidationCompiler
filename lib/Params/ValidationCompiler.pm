@@ -120,7 +120,7 @@ If you pass an arrayref and C<named_to_list> is false, the validator will
 expect positional params. Each element of the C<params> arrayref should be a
 parameter spec.
 
-If you pass an arrayref and C<named_to_list> is false, the validator will
+If you pass an arrayref and C<named_to_list> is true, the validator will
 expect named params, but will return a list of values. In this case the
 arrayref should contain a I<list> of key/value pairs, where parameter names
 are the keys and the specs are the values.
