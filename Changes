@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.24     2017-04-08
+
 - The source_for() exported by Params::ValidationCompiler did not work at
   all. Reported by Diab Jerius. GH #16.
 

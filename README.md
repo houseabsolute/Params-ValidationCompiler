@@ -4,7 +4,7 @@ Params::ValidationCompiler - Build an optimized subroutine parameter validator o
 
 # VERSION
 
-version 0.23
+version 0.24
 
 # SYNOPSIS
 
@@ -90,7 +90,7 @@ of these subs accept the same options:
     expect positional params. Each element of the `params` arrayref should be a
     parameter spec.
 
-    If you pass an arrayref and `named_to_list` is false, the validator will
+    If you pass an arrayref and `named_to_list` is true, the validator will
     expect named params, but will return a list of values. In this case the
     arrayref should contain a _list_ of key/value pairs, where parameter names
     are the keys and the specs are the values.
@@ -212,6 +212,7 @@ Dave Rolsky <autarch@urth.org>
 # CONTRIBUTORS
 
 - Gregory Oschwald <goschwald@maxmind.com>
+- Gregory Oschwald <oschwald@gmail.com>
 - Tomasz Konojacki <me@xenu.pl>
 
 # COPYRIGHT AND LICENSE
