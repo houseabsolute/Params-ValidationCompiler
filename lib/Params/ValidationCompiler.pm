@@ -3,7 +3,7 @@ package Params::ValidationCompiler;
 use strict;
 use warnings;
 
-our $VERSION = '0.24';
+our $VERSION = '0.25';
 
 use Params::ValidationCompiler::Compiler;
 
