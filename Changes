@@ -1,5 +1,9 @@
 {{$NEXT}}
 
+- The source_for() exported by Params::ValidationCompiler did not work at
+  all. Reported by Diab Jerius. GH #16.
+
+
 0.23     2017-01-23
 
 - Trying to create a validator for positional parameters where a required

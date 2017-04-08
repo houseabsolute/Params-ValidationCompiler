@@ -21,7 +21,7 @@ no warnings 'once';
 ## use critic
 
 sub source_for {
-    return Params::ValidationCompiler::Compiler->new(@_)->source_for;
+    return Params::ValidationCompiler::Compiler->new(@_)->source;
 }
 
 1;
