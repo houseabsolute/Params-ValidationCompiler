@@ -195,7 +195,7 @@ sub call_mxpv_dies {
 }
 
 {
-    my $tp = Type::Params::validation_for(
+    my $tp = Type::Params::compile(
         Int,
         ArrayRef,
         Optional [ InstanceOf ['DateTime'] ],
