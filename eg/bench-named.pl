@@ -198,12 +198,10 @@ sub call_mxpv_dies {
 }
 
 {
-    my $tp = Type::Params::compile(
-        slurpy Dict [
-            foo => Int,
-            bar => ArrayRef,
-            baz => Optional [ InstanceOf ['DateTime'] ],
-        ]
+    my $tp = Type::Params::compile_named(
+        foo => Int,
+        bar => ArrayRef,
+        baz => Optional [ InstanceOf ['DateTime'] ],
     );
 
     sub tp {
