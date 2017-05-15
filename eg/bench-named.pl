@@ -7,6 +7,7 @@ use Benchmark qw( cmpthese );
 use DateTime;
 use Moose::Util::TypeConstraints qw( class_type find_type_constraint );
 use MooseX::Params::Validate;
+use Params::Validate qw( validate SCALAR ARRAYREF );
 use Params::ValidationCompiler ();
 use Specio::Declare;
 use Specio::Library::Builtins;
@@ -238,6 +239,52 @@ sub call_tp_dies {
     eval { tp( foo => 42, bar => [ 1, 2, 3 ], baz => { year => 2016 } ) };
 }
 
+sub pv {
+    validate(
+        @_,
+        {
+            foo => {
+                type  => SCALAR,
+                regex => qr/^\d+$/a,
+            },
+            bar => { type => ARRAYREF },
+            baz => {
+                isa      => 'DateTime',
+                optional => 1,
+            },
+        },
+    );
+}
+
+{
+    is(
+        dies {
+            pv( foo => 42, bar => [ 1, 2, 3 ], baz => $dt );
+        },
+        undef,
+    );
+    is(
+        dies {
+            pv( foo => 42, bar => [ 1, 2, 3 ] );
+        },
+        undef,
+    );
+    ok(
+        dies {
+            pv( foo => 42, bar => [ 1, 2, 3 ], baz => { year => 2016 } );
+        }
+    );
+}
+
+sub call_pv_lives {
+    pv( foo => 42, bar => [ 1, 2, 3 ], baz => $dt );
+    pv( foo => 42, bar => [ 1, 2, 3 ] );
+}
+
+sub call_pv_dies {
+    eval { pv( foo => 42, bar => [ 1, 2, 3 ], baz => { year => 2016 } ) };
+}
+
 done_testing();
 
 cmpthese(
@@ -247,6 +294,7 @@ cmpthese(
         pcc_specio_lives => \&call_pcc_specio_lives,
         mxpv_lives       => \&call_mxpv_lives,
         tp_lives         => \&call_tp_lives,
+        pv_lives         => \&call_pv_lives,
     }
 );
 
@@ -259,5 +307,6 @@ cmpthese(
         pcc_specio_dies => \&call_pcc_specio_dies,
         mxpv_dies       => \&call_mxpv_dies,
         tp_dies         => \&call_tp_dies,
+        pv_dies         => \&call_pv_dies,
     },
 );
