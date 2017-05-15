@@ -19,7 +19,7 @@ use Types::Standard qw( ArrayRef Dict InstanceOf Int Optional slurpy );
 my $dt = DateTime->new( year => 2016 );
 
 {
-    my $pcc_moose = Params::ValidationCompiler::validation_for(
+    my $pvc_moose = Params::ValidationCompiler::validation_for(
         params => [
             { type => find_type_constraint('Int') },
             { type => find_type_constraint('ArrayRef') },
@@ -27,27 +27,27 @@ my $dt = DateTime->new( year => 2016 );
         ],
     );
 
-    sub pcc_moose {
-        return $pcc_moose->(@_);
+    sub pvc_moose {
+        return $pvc_moose->(@_);
     }
 }
 
 {
     is(
         dies {
-            pcc_moose( 42, [ 1, 2, 3 ], $dt );
+            pvc_moose( 42, [ 1, 2, 3 ], $dt );
         },
         undef,
     );
     is(
         dies {
-            pcc_moose( 42, [ 1, 2, 3 ] );
+            pvc_moose( 42, [ 1, 2, 3 ] );
         },
         undef,
     );
     ok(
         dies {
-            pcc_moose(
+            pvc_moose(
                 42,
                 [ 1, 2, 3 ],
                 { year => 2016 }
@@ -56,17 +56,17 @@ my $dt = DateTime->new( year => 2016 );
     );
 }
 
-sub call_pcc_moose_lives {
-    pcc_moose( 42, [ 1, 2, 3 ], $dt );
-    pcc_moose( 42, [ 1, 2, 3 ] );
+sub call_pvc_moose_lives {
+    pvc_moose( 42, [ 1, 2, 3 ], $dt );
+    pvc_moose( 42, [ 1, 2, 3 ] );
 }
 
-sub call_pcc_moose_dies {
-    eval { pcc_moose( 42, [ 1, 2, 3 ], { year => 2016 } ); };
+sub call_pvc_moose_dies {
+    eval { pvc_moose( 42, [ 1, 2, 3 ], { year => 2016 } ); };
 }
 
 {
-    my $pcc_tt = Params::ValidationCompiler::validation_for(
+    my $pvc_tt = Params::ValidationCompiler::validation_for(
         params => [
             { type => Int },
             { type => ArrayRef },
@@ -74,42 +74,42 @@ sub call_pcc_moose_dies {
         ],
     );
 
-    sub pcc_tt {
-        return $pcc_tt->(@_);
+    sub pvc_tt {
+        return $pvc_tt->(@_);
     }
 }
 
 {
     is(
         dies {
-            pcc_tt( 42, [ 1, 2, 3 ], $dt );
+            pvc_tt( 42, [ 1, 2, 3 ], $dt );
         },
         undef,
     );
     is(
         dies {
-            pcc_tt( 42, [ 1, 2, 3 ] );
+            pvc_tt( 42, [ 1, 2, 3 ] );
         },
         undef,
     );
     ok(
         dies {
-            pcc_tt( 42, [ 1, 2, 3 ], { year => 2016 } );
+            pvc_tt( 42, [ 1, 2, 3 ], { year => 2016 } );
         }
     );
 }
 
-sub call_pcc_tt_lives {
-    pcc_tt( 42, [ 1, 2, 3 ], $dt );
-    pcc_tt( 42, [ 1, 2, 3 ] );
+sub call_pvc_tt_lives {
+    pvc_tt( 42, [ 1, 2, 3 ], $dt );
+    pvc_tt( 42, [ 1, 2, 3 ] );
 }
 
-sub call_pcc_tt_dies {
-    eval { pcc_tt( 42, [ 1, 2, 3 ], { year => 2016 } ) };
+sub call_pvc_tt_dies {
+    eval { pvc_tt( 42, [ 1, 2, 3 ], { year => 2016 } ) };
 }
 
 {
-    my $pcc_specio = Params::ValidationCompiler::validation_for(
+    my $pvc_specio = Params::ValidationCompiler::validation_for(
         params => [
             { type => t('Int') },
             { type => t('ArrayRef') },
@@ -117,27 +117,27 @@ sub call_pcc_tt_dies {
         ],
     );
 
-    sub pcc_specio {
-        return $pcc_specio->(@_);
+    sub pvc_specio {
+        return $pvc_specio->(@_);
     }
 }
 
 {
     is(
         dies {
-            pcc_specio( 42, [ 1, 2, 3 ], $dt );
+            pvc_specio( 42, [ 1, 2, 3 ], $dt );
         },
         undef,
     );
     is(
         dies {
-            pcc_specio( 42, [ 1, 2, 3 ] );
+            pvc_specio( 42, [ 1, 2, 3 ] );
         },
         undef,
     );
     ok(
         dies {
-            pcc_specio(
+            pvc_specio(
                 42, [ 1, 2, 3 ],
                 { year => 2016 }
             );
@@ -145,13 +145,13 @@ sub call_pcc_tt_dies {
     );
 }
 
-sub call_pcc_specio_lives {
-    pcc_specio( 42, [ 1, 2, 3 ], $dt );
-    pcc_specio( 42, [ 1, 2, 3 ] );
+sub call_pvc_specio_lives {
+    pvc_specio( 42, [ 1, 2, 3 ], $dt );
+    pvc_specio( 42, [ 1, 2, 3 ] );
 }
 
-sub call_pcc_specio_dies {
-    eval { pcc_specio( 42, [ 1, 2, 3 ], { year => 2016 } ); };
+sub call_pvc_specio_dies {
+    eval { pvc_specio( 42, [ 1, 2, 3 ], { year => 2016 } ); };
 }
 
 {
@@ -281,9 +281,9 @@ done_testing();
 
 cmpthese(
     500000, {
-        pcc_moose_lives  => \&call_pcc_moose_lives,
-        pcc_tt_lives     => \&call_pcc_tt_lives,
-        pcc_specio_lives => \&call_pcc_specio_lives,
+        pvc_moose_lives  => \&call_pvc_moose_lives,
+        pvc_tt_lives     => \&call_pvc_tt_lives,
+        pvc_specio_lives => \&call_pvc_specio_lives,
         mxpv_lives       => \&call_mxpv_lives,
         tp_lives         => \&call_tp_lives,
         pv_lives         => \&call_pv_lives,
@@ -294,9 +294,9 @@ print "\n" or die $!;
 
 cmpthese(
     50000, {
-        pcc_moose_dies  => \&call_pcc_moose_dies,
-        pcc_tt_dies     => \&call_pcc_tt_dies,
-        pcc_specio_dies => \&call_pcc_specio_dies,
+        pvc_moose_dies  => \&call_pvc_moose_dies,
+        pvc_tt_dies     => \&call_pvc_tt_dies,
+        pvc_specio_dies => \&call_pvc_specio_dies,
         mxpv_dies       => \&call_mxpv_dies,
         tp_dies         => \&call_tp_dies,
         pv_dies         => \&call_pv_dies,
