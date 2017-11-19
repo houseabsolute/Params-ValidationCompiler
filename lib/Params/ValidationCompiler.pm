@@ -163,12 +163,12 @@ must be values of the specified type.
 =item * named_to_list
 
 If this is true, the generated subroutine will expect a list of key-value
-pairs or a hashref and it will return a list containing only the values.
-C<params> must be a arrayref of key-value pairs in the order of which the
-values should be returned.
+pairs or a hashref and it will return a list containing only values. The
+C<params> you pass must be a arrayref of key-value pairs. The order of these
+pairs determines the order in which values are returned.
 
 You cannot combine C<slurpy> with C<named_to_list> as there is no way to know
-how the order in which extra values should be returned.
+how to order the extra return values.
 
 =back
 
