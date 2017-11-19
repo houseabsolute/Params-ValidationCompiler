@@ -187,7 +187,7 @@ a list of values.
 
 For now, you must shift off the invocant yourself.
 
-This subroutine accepts an additional parameter:
+This subroutine accepts the following additional parameters:
 
 =over 4
 
