@@ -1,5 +1,10 @@
 {{$NEXT}}
 
+- All exceptions now include a stack trace by default when treated as a
+  string. This makes finding where validation failed a lot easier. Fixes GH
+  #18.
+
+
 0.24     2017-04-08
 
 - The source_for() exported by Params::ValidationCompiler did not work at

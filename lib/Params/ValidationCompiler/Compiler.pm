@@ -335,7 +335,8 @@ elsif ( @_ == 1 ) {
             else {
                 Params::ValidationCompiler::Exception::BadArguments->throw(
                     message =>
-                        'Expected a hash or hash reference but got a single object argument'
+                        'Expected a hash or hash reference but got a single object argument',
+                    show_trace => 1,
                 );
             }
         }
@@ -348,6 +349,7 @@ elsif ( @_ == 1 ) {
                     'Expected a hash or hash reference but got a single '
                     . ( ref $_[0] )
                     . ' reference argument',
+                show_trace => 1,
             );
         }
     }
@@ -355,6 +357,7 @@ elsif ( @_ == 1 ) {
         Params::ValidationCompiler::Exception::BadArguments->throw(
             message =>
                 'Expected a hash or hash reference but got a single non-reference argument',
+            show_trace => 1,
         );
     }
 }
@@ -362,6 +365,7 @@ else {
     Params::ValidationCompiler::Exception::BadArguments->throw(
         message =>
             'Expected a hash or hash reference but got an odd number of arguments',
+        show_trace => 1,
     );
 }
 EOF
@@ -379,8 +383,9 @@ sub _add_check_for_required_named_param {
         sprintf( <<'EOF', $access, ($qname) x 2 );
 exists %s
     or Params::ValidationCompiler::Exception::Named::Required->throw(
-    message   => %s . ' is a required parameter',
-    parameter => %s,
+    message    => %s . ' is a required parameter',
+    parameter  => %s,
+    show_trace => 1,
     );
 EOF
 
@@ -418,12 +423,13 @@ sub _add_check_for_extra_hash_params {
     $self->_env->{'%known'}
         = { map { $_ => 1 } keys %{$params} };
     push @{ $self->_source }, <<'EOF';
-my @extra = grep { ! $known{$_} } keys %args;
-if ( @extra ) {
+my @extra = grep { !$known{$_} } keys %args;
+if (@extra) {
     my $u = join ', ', sort @extra;
     Params::ValidationCompiler::Exception::Named::Extra->throw(
         message    => "found extra parameters: [$u]",
         parameters => \@extra,
+        show_trace => 1,
     );
 }
 EOF
@@ -524,9 +530,10 @@ if ( @_ < %d ) {
     my $got = scalar @_;
     my $got_n = @_ == 1 ? 'parameter' : 'parameters';
     Params::ValidationCompiler::Exception::Positional::Required->throw(
-        message => "got $got $got_n but expected at least %d",
-        minimum => %d,
-        got     => scalar @_,
+        message    => "got $got $got_n but expected at least %d",
+        minimum    => %d,
+        got        => scalar @_,
+        show_trace => 1,
     );
 }
 EOF
@@ -567,9 +574,10 @@ if ( @_ > %d ) {
     my $extra = @_ - %d;
     my $extra_n = $extra == 1 ? 'parameter' : 'parameters';
     Params::ValidationCompiler::Exception::Positional::Extra->throw(
-        message => "got $extra extra $extra_n",
-        maximum => %d,
-        got     => scalar @_,
+        message    => "got $extra extra $extra_n",
+        maximum    => %d,
+        got        => scalar @_,
+        show_trace => 1,
     );
 }
 EOF
