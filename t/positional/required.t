@@ -32,7 +32,7 @@ use Specio::Library::Builtins;
 
     like(
         dies { $sub->() },
-        qr/got 0 parameters but expected at least 1/,
+        qr/Got 0 parameters but expected at least 1/,
         'dies when not given any params'
     );
 }

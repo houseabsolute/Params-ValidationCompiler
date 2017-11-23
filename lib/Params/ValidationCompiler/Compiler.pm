@@ -154,6 +154,12 @@ sub _env { $_[0]->{_env} }
 
 sub named_to_list { $_[0]->{named_to_list} }
 
+sub _inlineable_name {
+    return defined $_[0]->{name}
+        ? $_[0]->{name}
+        : 'an un-named validation subroutine';
+}
+
 sub _any_type_has_coercion {
     my $self = shift;
 
@@ -319,36 +325,37 @@ sub _compile_named_args_check_body {
 sub _set_named_args_hash {
     my $self = shift;
 
-    push @{ $self->_source }, <<'EOF';
-my %args;
-if ( @_ % 2 == 0 ) {
-    %args = @_;
+    push @{ $self->_source },
+        sprintf( <<'EOF', ( $self->_inlineable_name ) x 4 );
+my %%args;
+if ( @_ %% 2 == 0 ) {
+    %%args = @_;
 }
 elsif ( @_ == 1 ) {
     if ( ref $_[0] ) {
         if ( Scalar::Util::blessed( $_[0] ) ) {
             if ( overload::Overloaded( $_[0] )
-                && defined overload::Method( $_[0], '%{}' ) ) {
+                && defined overload::Method( $_[0], '%%{}' ) ) {
 
-                %args = %{ $_[0] };
+                %%args = %%{ $_[0] };
             }
             else {
                 Params::ValidationCompiler::Exception::BadArguments->throw(
                     message =>
-                        'Expected a hash or hash reference but got a single object argument',
+                        'Expected a hash or hash reference but a single object argument was passed to %s',
                     show_trace => 1,
                 );
             }
         }
         elsif ( ref $_[0] eq 'HASH' ) {
-            %args = %{ $_[0] };
+            %%args = %%{ $_[0] };
         }
         else {
             Params::ValidationCompiler::Exception::BadArguments->throw(
                 message =>
-                    'Expected a hash or hash reference but got a single '
+                    'Expected a hash or hash reference but a single '
                     . ( ref $_[0] )
-                    . ' reference argument',
+                    . ' reference argument was passed to %s',
                 show_trace => 1,
             );
         }
@@ -356,7 +363,7 @@ elsif ( @_ == 1 ) {
     else {
         Params::ValidationCompiler::Exception::BadArguments->throw(
             message =>
-                'Expected a hash or hash reference but got a single non-reference argument',
+                'Expected a hash or hash reference but a single non-reference argument was passed to %s',
             show_trace => 1,
         );
     }
@@ -364,7 +371,7 @@ elsif ( @_ == 1 ) {
 else {
     Params::ValidationCompiler::Exception::BadArguments->throw(
         message =>
-            'Expected a hash or hash reference but got an odd number of arguments',
+            'Expected a hash or hash reference but an odd number of arguments was passed to %s',
         show_trace => 1,
     );
 }
@@ -380,10 +387,10 @@ sub _add_check_for_required_named_param {
 
     my $qname = perlstring($name);
     push @{ $self->_source },
-        sprintf( <<'EOF', $access, ($qname) x 2 );
+        sprintf( <<'EOF', $access, $qname, $self->_inlineable_name, $qname );
 exists %s
     or Params::ValidationCompiler::Exception::Named::Required->throw(
-    message    => %s . ' is a required parameter',
+    message    => %s . ' is a required parameter for %s',
     parameter  => %s,
     show_trace => 1,
     );
@@ -422,12 +429,12 @@ sub _add_check_for_extra_hash_params {
 
     $self->_env->{'%known'}
         = { map { $_ => 1 } keys %{$params} };
-    push @{ $self->_source }, <<'EOF';
-my @extra = grep { !$known{$_} } keys %args;
+    push @{ $self->_source }, sprintf( <<'EOF', $self->_inlineable_name );
+my @extra = grep { !$known{$_} } keys %%args;
 if (@extra) {
     my $u = join ', ', sort @extra;
     Params::ValidationCompiler::Exception::Named::Extra->throw(
-        message    => "found extra parameters: [$u]",
+        message    => "Found extra parameters passed to %s: [$u]",
         parameters => \@extra,
         show_trace => 1,
     );
@@ -525,12 +532,13 @@ sub _add_check_for_required_positional_params {
     my $self = shift;
     my $min  = shift;
 
-    push @{ $self->_source }, sprintf( <<'EOF', ($min) x 3 );
+    push @{ $self->_source },
+        sprintf( <<'EOF', ($min) x 2, $self->_inlineable_name, $min );
 if ( @_ < %d ) {
     my $got = scalar @_;
     my $got_n = @_ == 1 ? 'parameter' : 'parameters';
     Params::ValidationCompiler::Exception::Positional::Required->throw(
-        message    => "got $got $got_n but expected at least %d",
+        message    => "Got $got $got_n but expected at least %d for %s",
         minimum    => %d,
         got        => scalar @_,
         show_trace => 1,
@@ -569,12 +577,13 @@ sub _add_check_for_extra_positional_params {
     my $self = shift;
     my $max  = shift;
 
-    push @{ $self->_source }, sprintf( <<'EOF', ($max) x 3 );
+    push @{ $self->_source },
+        sprintf( <<'EOF', ($max) x 2, $self->_inlineable_name, $max );
 if ( @_ > %d ) {
     my $extra = @_ - %d;
     my $extra_n = $extra == 1 ? 'parameter' : 'parameters';
     Params::ValidationCompiler::Exception::Positional::Extra->throw(
-        message    => "got $extra extra $extra_n",
+        message    => "Got $extra extra $extra_n for %s",
         maximum    => %d,
         got        => scalar @_,
         show_trace => 1,

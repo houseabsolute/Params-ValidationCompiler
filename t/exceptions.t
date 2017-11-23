@@ -11,11 +11,12 @@ use Specio::Library::Builtins;
 {
     my $sub = validation_for(
         params => [ { type => t('Str') } ],
+        name   => 'test validator',
     );
 
     like(
         dies { $sub->( 'foo', 'bar' ) },
-        qr{got 1 extra parameter.+called at t/exceptions\.t line \d+}s,
+        qr{Got 1 extra parameter for test validator.+called at t/exceptions\.t line \d+}s,
         'exception includes stack trace',
     );
 }

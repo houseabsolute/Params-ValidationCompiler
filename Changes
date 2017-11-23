@@ -4,6 +4,9 @@
   string. This makes finding where validation failed a lot easier. Fixes GH
   #18.
 
+- The name for a subroutine is now used in some exception messages, even if
+  Sub::Util cannot be installed.
+
 
 0.24     2017-04-08
 
