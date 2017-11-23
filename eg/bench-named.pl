@@ -11,7 +11,7 @@ use Params::Validate qw( validate SCALAR ARRAYREF );
 use Params::ValidationCompiler ();
 use Specio::Declare;
 use Specio::Library::Builtins;
-use Test2::Bundle::Extended;
+use Test2::V0;
 use Test2::Plugin::DieOnFail;
 use Type::Params ();
 use Types::Standard qw( ArrayRef Dict InstanceOf Int Optional slurpy );
