@@ -10,8 +10,9 @@ use Specio::Library::Builtins;
 
 {
     my $sub = validation_for(
-        params => [ { type => t('Str') } ],
-        name   => 'test validator',
+        params           => [ { type => t('Str') } ],
+        name             => 'test validator',
+        name_is_optional => 1,
     );
 
     like(
