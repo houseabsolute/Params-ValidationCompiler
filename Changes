@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.26     2017-11-28
+
 - The exceptions.t test would fail if Sub::Util was not installed. Reported by
   Paul Howarth. GH #19.
 
