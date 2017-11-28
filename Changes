@@ -3,6 +3,8 @@
 - The exceptions.t test would fail if Sub::Util was not installed. Reported by
   Paul Howarth. GH #19.
 
+- Fix test failures on Windows. GH #20.
+
 
 0.25     2017-11-23
 
