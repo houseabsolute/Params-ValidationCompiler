@@ -212,6 +212,12 @@ loaded causes an exception.
 This is useful for CPAN modules where you want to set a name if you can, but
 you do not want to add a prerequisite on L<Sub::Util>.
 
+=item * debug
+
+Sets the C<EVAL_CLOSURE_PRINT_SOURCE> environment variable to true before
+calling C<Eval::Closure::eval_closure()>. This causes the source of the
+subroutine to be printed before it's C<eval>'d.
+
 =back
 
 =head2 source_for(...)

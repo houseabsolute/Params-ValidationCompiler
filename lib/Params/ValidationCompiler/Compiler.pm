@@ -36,7 +36,8 @@ BEGIN {
 }
 
 my %known
-    = map { $_ => 1 } qw( name name_is_optional params slurpy named_to_list );
+    = map { $_ => 1 }
+    qw( debug name name_is_optional params slurpy named_to_list );
 
 # I'd rather use Moo here but I want to make things relatively high on the
 # CPAN river like DateTime use this distro, so reducing deps is important.
@@ -209,6 +210,8 @@ sub subref {
     my $self = shift;
 
     $self->_compile;
+
+    local $ENV{EVAL_CLOSURE_PRINT_SOURCE} = 1 if $self->{debug};
     my $sub = eval_closure(
         source => 'sub { ' . ( join "\n", @{ $self->_source } ) . ' };',
         environment => $self->_env,

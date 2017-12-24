@@ -1,5 +1,9 @@
 {{$NEXT}}
 
+- Added a debug option to dump the source of the subroutine before it is
+  eval'd.
+
+
 0.26     2017-11-28
 
 - The exceptions.t test would fail if Sub::Util was not installed. Reported by
