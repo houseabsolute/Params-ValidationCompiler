@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+- Fixed a bug with inlining Moose types. If a type's parent needed environment
+  variables those would not get closed over. Reported by Mark Fowler. GH #22.
+
 - Added a debug option to dump the source of the subroutine before it is
   eval'd.
 

@@ -883,7 +883,7 @@ EOF
     if ( $type->can_be_inlined ) {
         $self->_add_to_environment(
             sprintf( 'The %s type', $type->name ),
-            $type->_inline_environment,
+            $type->inline_environment,
         );
     }
 
