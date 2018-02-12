@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.27     2018-02-11
+
 - Fixed a bug with inlining Moose types. If a type's parent needed environment
   variables those would not get closed over. Reported by Mark Fowler. GH #22.
 
