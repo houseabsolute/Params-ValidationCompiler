@@ -71,11 +71,7 @@ sub new {
         $class->_validate_param_spec($_) for @specs;
     }
     else {
-        my $type
-            = !defined $p{params} ? 'an undef'
-            : ref $p{params} ? q{a } . ( lc ref $p{params} ) . q{ref}
-            :                  'a scalar';
-
+        my $type = _describe( $p{params} );
         croak
             qq{The "params" parameter when creating a parameter validator must be a hashref or arrayref, you passed $type};
     }
@@ -85,11 +81,7 @@ sub new {
     }
 
     if ( exists $p{name} && ( !defined $p{name} || ref $p{name} ) ) {
-        my $type
-            = !defined $p{name}
-            ? 'an undef'
-            : q{a } . ( lc ref $p{name} ) . q{ref};
-
+        my $type = _describe( $p{name} );
         croak
             qq{The "name" parameter when creating a parameter validator must be a scalar, you passed $type};
     }
@@ -106,6 +98,26 @@ sub new {
     $self->{_env}    = {};
 
     return $self;
+}
+
+sub _describe {
+    my $thing = shift;
+
+    if ( !defined $thing ) {
+        return 'an undef';
+    }
+    elsif ( my $class = blessed $thing ) {
+        my $article = $class =~ /^[aeiou]/i ? 'an' : 'a';
+        return "$article $class object";
+    }
+    elsif ( ref $thing ) {
+        my $ref = lc ref $thing;
+        my $article = $ref =~ /^[aeiou]/i ? 'an' : 'a';
+
+        return "$article $ref" . 'ref';
+    }
+
+    return 'a scalar';
 }
 
 {
