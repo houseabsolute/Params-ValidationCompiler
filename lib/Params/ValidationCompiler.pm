@@ -170,6 +170,45 @@ pairs determines the order in which values are returned.
 You cannot combine C<slurpy> with C<named_to_list> as there is no way to know
 how to order the extra return values.
 
+=item * return_object
+
+If this is true, the generated subroutine will return an object instead of a
+hashref. You cannot set this option to true if you set either or C<slurpy> or
+C<named_to_list>.
+
+The object's methods correspond to the parameter names passed to the
+subroutine. While calling methods on an object is slower than accessing a
+hashref, the advantage is that if you typo a parameter name you'll get a
+helpful error.
+
+If you have L<Class::XSAccessor> installed then this will be used to create
+the class's methods, which makes it fairly fast.
+
+The returned object is in a generated class. Do not rely on this class name
+being anything in specific, and don't check this object using C<isa>, C<DOES>,
+or anything similar.
+
+When C<return_object> is true, the parameter spec hashref also accepts to the
+following additional keys:
+
+=over 8
+
+=item * getter
+
+Use this to set an explicit getter method name for the parameter. By default
+the method name will be the same as the parameter name. Note that if the
+parameter name is not a valid sub name, then you will get an error compiling
+the validation sub unless you specify a getter for the parameter.
+
+=item * predicate
+
+Use this to ask for a predicate method to be created for this parameter. The
+predicate method returns true if the parameter was passed and false if it
+wasn't. Note that this is only useful for optional parameters, but you can ask
+for a predicate for any parameter.
+
+=back
+
 =back
 
 =head2 validation_for(...)

@@ -114,4 +114,27 @@ like(
     'got expected error message when validation_for is called with a spec that is a type instead of a hashref'
 );
 
+like(
+    dies {
+        validation_for(
+            params        => [ { type => t('Str') } ],
+            return_object => 1,
+        );
+    },
+    qr/\QYou can only use "return_object" with named params\E.+at t.self-check\.t line \d+/,
+    'got expected error message when validation_for is called with arrayref params and return_object is true'
+);
+
+like(
+    dies {
+        validation_for(
+            params        => { foo => { type => t('Str') } },
+            return_object => 1,
+            slurpy        => 1,
+        );
+    },
+    qr/\QYou cannot use "return_object" and "slurpy" together\E.+at t.self-check\.t line \d+/,
+    'got expected error message when validation_for is called with return_object and slurpy both set'
+);
+
 done_testing();
