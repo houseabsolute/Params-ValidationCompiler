@@ -33,6 +33,12 @@ like(
 );
 
 like(
+    dies { validation_for( params => bless {}, 'Foo' ) },
+    qr/\QThe "params" parameter when creating a parameter validator must be a hashref or arrayref, you passed a Foo object\E.+at t.self-check\.t line \d+/,
+    'got expected error message when validation_for is called params as anobject'
+);
+
+like(
     dies { validation_for( params => { a => {} }, foo => 1, bar => 2 ) },
     qr/\QYou passed unknown parameters when creating a parameter validator: [bar foo]\E.+at t.self-check\.t line \d+/,
     'got expected error message when validation_for is called with extra unknown parameters'
@@ -46,8 +52,14 @@ like(
 
 like(
     dies { validation_for( params => { a => {} }, name => [], ) },
-    qr/\QThe "name" parameter when creating a parameter validator must be a scalar, you passed a arrayref\E.+at t.self-check\.t line \d+/,
+    qr/\QThe "name" parameter when creating a parameter validator must be a scalar, you passed an arrayref\E.+at t.self-check\.t line \d+/,
     'got expected error message when validation_for is called with name as an arrayref'
+);
+
+like(
+    dies { validation_for( params => { a => {} }, name => bless {}, 'Foo' ) },
+    qr/\QThe "name" parameter when creating a parameter validator must be a scalar, you passed a Foo object\E.+at t.self-check\.t line \d+/,
+    'got expected error message when validation_for is called with name as an object'
 );
 
 like(
