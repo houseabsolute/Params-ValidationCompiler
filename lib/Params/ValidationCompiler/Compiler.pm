@@ -113,7 +113,6 @@ sub _describe {
     elsif ( ref $thing ) {
         my $ref = lc ref $thing;
         my $article = $ref =~ /^[aeiou]/i ? 'an' : 'a';
-
         return "$article $ref" . 'ref';
     }
 
