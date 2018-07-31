@@ -1,5 +1,6 @@
 requires "B" => "0";
 requires "Carp" => "0";
+requires "Class::XSAccessor" => "0";
 requires "Eval::Closure" => "0";
 requires "Exception::Class" => "0";
 requires "Exporter" => "0";
@@ -31,6 +32,7 @@ on 'configure' => sub {
 };
 
 on 'develop' => sub {
+  requires "Class::XSAccessor" => "0";
   requires "Code::TidyAll" => "0.56";
   requires "Code::TidyAll::Plugin::SortLines::Naturally" => "0.000003";
   requires "Code::TidyAll::Plugin::Test::Vars" => "0.02";

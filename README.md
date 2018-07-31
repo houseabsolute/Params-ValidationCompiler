@@ -4,7 +4,7 @@ Params::ValidationCompiler - Build an optimized subroutine parameter validator o
 
 # VERSION
 
-version 0.27
+version 0.28
 
 # SYNOPSIS
 
@@ -135,6 +135,41 @@ of these subs accept the same options:
 
     You cannot combine `slurpy` with `named_to_list` as there is no way to know
     how to order the extra return values.
+
+- return\_object
+
+    If this is true, the generated subroutine will return an object instead of a
+    hashref. You cannot set this option to true if you set either or `slurpy` or
+    `named_to_list`.
+
+    The object's methods correspond to the parameter names passed to the
+    subroutine. While calling methods on an object is slower than accessing a
+    hashref, the advantage is that if you typo a parameter name you'll get a
+    helpful error.
+
+    If you have [Class::XSAccessor](https://metacpan.org/pod/Class::XSAccessor) installed then this will be used to create
+    the class's methods, which makes it fairly fast.
+
+    The returned object is in a generated class. Do not rely on this class name
+    being anything in specific, and don't check this object using `isa`, `DOES`,
+    or anything similar.
+
+    When `return_object` is true, the parameter spec hashref also accepts to the
+    following additional keys:
+
+    - getter
+
+        Use this to set an explicit getter method name for the parameter. By default
+        the method name will be the same as the parameter name. Note that if the
+        parameter name is not a valid sub name, then you will get an error compiling
+        the validation sub unless you specify a getter for the parameter.
+
+    - predicate
+
+        Use this to ask for a predicate method to be created for this parameter. The
+        predicate method returns true if the parameter was passed and false if it
+        wasn't. Note that this is only useful for optional parameters, but you can ask
+        for a predicate for any parameter.
 
 ## validation\_for(...)
 
