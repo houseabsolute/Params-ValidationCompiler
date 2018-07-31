@@ -33,11 +33,18 @@ BEGIN {
                 'Cannot name a generated validation subroutine. Please install Sub::Util.';
         };
     }
+
+    my $has_cxsa = eval {
+        require Class::XSAccessor;
+        1;
+    };
+
+    sub HAS_CXSA {$has_cxsa}
 }
 
 my %known
     = map { $_ => 1 }
-    qw( debug name name_is_optional params slurpy named_to_list );
+    qw( debug name name_is_optional named_to_list params return_object slurpy );
 
 # I'd rather use Moo here but I want to make things relatively high on the
 # CPAN river like DateTime use this distro, so reducing deps is important.
@@ -49,6 +56,7 @@ sub new {
         croak
             q{You must provide a "params" parameter when creating a parameter validator};
     }
+
     if ( ref $p{params} eq 'HASH' ) {
         croak q{The "params" hashref must contain at least one key-value pair}
             unless %{ $p{params} };
@@ -62,6 +70,9 @@ sub new {
     elsif ( ref $p{params} eq 'ARRAY' ) {
         croak q{The "params" arrayref must contain at least one element}
             unless @{ $p{params} };
+
+        croak q{You can only use "return_object" with named params}
+            if $p{return_object};
 
         my @specs
             = $p{named_to_list}
@@ -84,6 +95,10 @@ sub new {
         my $type = _describe( $p{name} );
         croak
             qq{The "name" parameter when creating a parameter validator must be a scalar, you passed $type};
+    }
+
+    if ( $p{return_object} && $p{slurpy} ) {
+        croak q{You cannot use "return_object" and "slurpy" together};
     }
 
     my @unknown = sort grep { !$known{$_} } keys %p;
@@ -121,9 +136,11 @@ sub _describe {
 
 {
     my %known_keys = (
-        default  => 1,
-        optional => 1,
-        type     => 1,
+        default   => 1,
+        getter    => 1,
+        optional  => 1,
+        predicate => 1,
+        type      => 1,
     );
 
     sub _validate_param_spec {
@@ -165,6 +182,8 @@ sub _source { $_[0]->{_source} }
 sub _env { $_[0]->{_env} }
 
 sub named_to_list { $_[0]->{named_to_list} }
+
+sub return_object { $_[0]->{return_object} }
 
 sub _inlineable_name {
     return defined $_[0]->{name}
@@ -269,7 +288,100 @@ sub _compile_named_args_check {
     my $self = shift;
 
     $self->_compile_named_args_check_body( $self->params );
-    push @{ $self->_source }, 'return %args;';
+
+    if ( $self->return_object ) {
+        push @{ $self->_source }, $self->_add_return_named_args_object;
+    }
+    else {
+        push @{ $self->_source }, 'return %args;';
+    }
+
+    return;
+}
+
+{
+    my $class_id = 0;
+
+    sub _add_return_named_args_object {
+        my $self = shift;
+
+        my $params = $self->params;
+        my %getters;
+        my %predicates;
+        for my $p ( keys %{$params} ) {
+            $getters{
+                ref $params->{$p} && exists $params->{$p}{getter}
+                ? $params->{$p}{getter}
+                : $p
+            } = $p;
+            $predicates{ $params->{$p}{predicate} } = $p
+                if ref $params->{$p} && exists $params->{$p}{predicate};
+        }
+
+        my $use_cxsa = HAS_CXSA && !$ENV{TEST_NAMED_ARGS_OBJECT_WITHOUT_CXSA};
+        my $class = sprintf(
+            '%s::OO::Args%d::%s',
+            __PACKAGE__,
+            $class_id++,
+            $use_cxsa ? 'XS' : 'PP',
+        );
+
+        if ($use_cxsa) {
+            $self->_create_cxsa_return_class(
+                $class,
+                \%getters,
+                \%predicates,
+            );
+        }
+        else {
+            $self->_create_pp_return_class( $class, \%getters, \%predicates );
+        }
+
+        return sprintf( 'bless \%%args, %s', perlstring($class) );
+    }
+}
+
+sub _create_cxsa_return_class {
+    my $self       = shift;
+    my $class      = shift;
+    my $getters    = shift;
+    my $predicates = shift;
+
+    Class::XSAccessor->import(
+        redefine          => 1,
+        class             => $class,
+        getters           => $getters,
+        exists_predicates => $predicates,
+    );
+
+    return;
+}
+
+sub _create_pp_return_class {
+    my $self       = shift;
+    my $class      = shift;
+    my $getters    = shift;
+    my $predicates = shift;
+
+    my @source = sprintf( 'package %s;', $class );
+    for my $sub ( keys %{$getters} ) {
+        push @source,
+            sprintf(
+            'sub %s { return $_[0]->{%s} }', $sub,
+            perlstring( $getters->{$sub} )
+            );
+    }
+    for my $sub ( keys %{$predicates} ) {
+        push @source,
+            sprintf(
+            'sub %s { return exists $_[0]->{%s} }', $sub,
+            perlstring( $predicates->{$sub} )
+            );
+    }
+    push @source, q{1;};
+    ## no critic (BuiltinFunctions::ProhibitStringyEval, ErrorHandling::RequireCheckingReturnValueOfEval)
+    eval join q{}, @source
+        or die $@;
 
     return;
 }
