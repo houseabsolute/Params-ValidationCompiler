@@ -1,6 +1,5 @@
 requires "B" => "0";
 requires "Carp" => "0";
-requires "Class::XSAccessor" => "0";
 requires "Eval::Closure" => "0";
 requires "Exception::Class" => "0";
 requires "Exporter" => "0";
@@ -9,6 +8,7 @@ requires "Scalar::Util" => "0";
 requires "overload" => "0";
 requires "strict" => "0";
 requires "warnings" => "0";
+recommends "Class::XSAccessor" => "0";
 recommends "Sub::Util" => "1.40";
 
 on 'test' => sub {

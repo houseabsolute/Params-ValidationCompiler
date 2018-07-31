@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.29     2018-07-31
+
 - Make Class::XSAccessor a recommended dep, not a required one.
 
 

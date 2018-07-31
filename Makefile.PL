@@ -20,7 +20,6 @@ my %WriteMakefileArgs = (
   "PREREQ_PM" => {
     "B" => 0,
     "Carp" => 0,
-    "Class::XSAccessor" => 0,
     "Eval::Closure" => 0,
     "Exception::Class" => 0,
     "Exporter" => 0,
@@ -41,7 +40,7 @@ my %WriteMakefileArgs = (
     "Test::More" => "1.302015",
     "Test::Without::Module" => 0
   },
-  "VERSION" => "0.28",
+  "VERSION" => "0.29",
   "test" => {
     "TESTS" => "t/*.t t/named/*.t t/positional/*.t"
   }
@@ -50,7 +49,6 @@ my %WriteMakefileArgs = (
 my %FallbackPrereqs = (
   "B" => 0,
   "Carp" => 0,
-  "Class::XSAccessor" => 0,
   "Eval::Closure" => 0,
   "Exception::Class" => 0,
   "Exporter" => 0,
