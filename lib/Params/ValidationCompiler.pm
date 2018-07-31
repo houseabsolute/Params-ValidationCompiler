@@ -101,14 +101,12 @@ parameters as key/value pairs or a list of values.
 In addition to type checks, it also supports parameter defaults, optional
 parameters, and extra "slurpy" parameters.
 
-=head1 EXPORTS
+=head1 PARAMETERS
 
 This module has two options exports, C<validation_for> and C<source_for>. Both
 of these subs accept the same options:
 
-=over 4
-
-=item * params
+=head2 params
 
 An arrayref or hashref containing a parameter specification.
 
@@ -130,7 +128,7 @@ this indicates required (true) or optional (false).
 
 The spec hashref accepts the following keys:
 
-=over 8
+=over 4
 
 =item * type
 
@@ -151,7 +149,7 @@ parameters are required unless you provide a default.
 
 =back
 
-=item * slurpy
+=head2 slurpy
 
 If this is a simple true value, then the generated subroutine accepts
 additional arguments not specified in C<params>. By default, extra arguments
@@ -160,7 +158,7 @@ cause an exception.
 You can also pass a type constraint here, in which case all extra arguments
 must be values of the specified type.
 
-=item * named_to_list
+=head2 named_to_list
 
 If this is true, the generated subroutine will expect a list of key-value
 pairs or a hashref and it will return a list containing only values. The
@@ -170,7 +168,7 @@ pairs determines the order in which values are returned.
 You cannot combine C<slurpy> with C<named_to_list> as there is no way to know
 how to order the extra return values.
 
-=item * return_object
+=head2 return_object
 
 If this is true, the generated subroutine will return an object instead of a
 hashref. You cannot set this option to true if you set either or C<slurpy> or
@@ -191,7 +189,7 @@ or anything similar.
 When C<return_object> is true, the parameter spec hashref also accepts to the
 following additional keys:
 
-=over 8
+=over 4
 
 =item * getter
 
@@ -209,7 +207,9 @@ for a predicate for any parameter.
 
 =back
 
-=back
+=head1 EXPORTS
+
+The exported subs are:
 
 =head2 validation_for(...)
 
