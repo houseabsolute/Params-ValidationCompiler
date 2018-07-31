@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+- Make Class::XSAccessor a recommended dep, not a required one.
+
+
 0.28     2018-07-31
 
 - Added a new option for named params, "return_object". This causes the
