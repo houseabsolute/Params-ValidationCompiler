@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.28     2018-07-31
+
 - Added a new option for named params, "return_object". This causes the
   validation sub to return an object with methods for each param rather than a
   hashref. This is a great way to avoid typos in hash keys. This idea (and
