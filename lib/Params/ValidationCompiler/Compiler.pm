@@ -126,7 +126,7 @@ sub _describe {
         return "$article $class object";
     }
     elsif ( ref $thing ) {
-        my $ref = lc ref $thing;
+        my $ref     = lc ref $thing;
         my $article = $ref =~ /^[aeiou]/i ? 'an' : 'a';
         return "$article $ref" . 'ref';
     }
@@ -243,13 +243,13 @@ sub subref {
 
     local $ENV{EVAL_CLOSURE_PRINT_SOURCE} = 1 if $self->{debug};
     my $sub = eval_closure(
-        source => 'sub { ' . ( join "\n", @{ $self->_source } ) . ' };',
+        source      => 'sub { ' . ( join "\n", @{ $self->_source } ) . ' };',
         environment => $self->_env,
     );
 
     if ( $self->_has_name ) {
         my $caller = $self->_has_caller ? $self->_caller : caller(1);
-        my $name = join '::', $caller, $self->name;
+        my $name   = join '::', $caller, $self->name;
 
         return $sub if $self->_name_is_optional && !HAS_SUB_UTIL;
         set_subname( $name, $sub );
@@ -319,7 +319,7 @@ sub _compile_named_args_check {
         }
 
         my $use_cxsa = HAS_CXSA && !$ENV{TEST_NAMED_ARGS_OBJECT_WITHOUT_CXSA};
-        my $class = sprintf(
+        my $class    = sprintf(
             '%s::OO::Args%d::%s',
             __PACKAGE__,
             $class_id++,
@@ -605,7 +605,7 @@ sub _compile_positional_args_check {
     for my $i ( 0 .. $#specs ) {
         my $spec = $specs[$i];
 
-        my $name = "Parameter $i";
+        my $name   = "Parameter $i";
         my $access = sprintf( '%s[%i]', $access_var, $i );
 
         $self->_add_positional_default_assignment(
