@@ -1,8 +1,3 @@
-#*#
-*~
-.#*
-.Makefile
-.Makefile.old
 /.build
 /.tidyall.d
 /Build
@@ -12,3 +7,8 @@
 /blib*
 /cover_db*
 /pm_to_blib*
+#*#
+*~
+.#*
+.Makefile
+.Makefile.old

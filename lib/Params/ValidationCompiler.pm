@@ -118,10 +118,10 @@ If you pass an arrayref and C<named_to_list> is false, the validator will
 expect positional params. Each element of the C<params> arrayref should be a
 parameter spec.
 
-If you pass an arrayref and C<named_to_list> is true, the validator will
-expect named params, but will return a list of values. In this case the
-arrayref should contain a I<list> of key/value pairs, where parameter names
-are the keys and the specs are the values.
+If you pass an arrayref and C<named_to_list> is true, the validator will expect
+named params, but will return a list of values. In this case the arrayref
+should contain a I<list> of key/value pairs, where parameter names are the keys
+and the specs are the values.
 
 Each spec can contain either a boolean or hashref. If the spec is a boolean,
 this indicates required (true) or optional (false).
@@ -132,15 +132,15 @@ The spec hashref accepts the following keys:
 
 =item * type
 
-A type object. This can be a L<Moose> type (from L<Moose> or
-L<MooseX::Types>), a L<Type::Tiny> type, or a L<Specio> type.
+A type object. This can be a L<Moose> type (from L<Moose> or L<MooseX::Types>),
+a L<Type::Tiny> type, or a L<Specio> type.
 
 If the type has coercions, those will always be used.
 
 =item * default
 
-This can either be a simple (non-reference) scalar or a subroutine
-reference. The sub ref will be called without any arguments (for now).
+This can either be a simple (non-reference) scalar or a subroutine reference.
+The sub ref will be called without any arguments (for now).
 
 =item * optional
 
@@ -160,10 +160,10 @@ must be values of the specified type.
 
 =head2 named_to_list
 
-If this is true, the generated subroutine will expect a list of key-value
-pairs or a hashref and it will return a list containing only values. The
-C<params> you pass must be a arrayref of key-value pairs. The order of these
-pairs determines the order in which values are returned.
+If this is true, the generated subroutine will expect a list of key-value pairs
+or a hashref and it will return a list containing only values. The C<params>
+you pass must be a arrayref of key-value pairs. The order of these pairs
+determines the order in which values are returned.
 
 You cannot combine C<slurpy> with C<named_to_list> as there is no way to know
 how to order the extra return values.
@@ -179,8 +179,8 @@ subroutine. While calling methods on an object is slower than accessing a
 hashref, the advantage is that if you typo a parameter name you'll get a
 helpful error.
 
-If you have L<Class::XSAccessor> installed then this will be used to create
-the class's methods, which makes it fairly fast.
+If you have L<Class::XSAccessor> installed then this will be used to create the
+class's methods, which makes it fairly fast.
 
 The returned object is in a generated class. Do not rely on this class name
 being anything in specific, and don't check this object using C<isa>, C<DOES>,
@@ -213,16 +213,15 @@ The exported subs are:
 
 =head2 validation_for(...)
 
-This returns a subroutine that implements the specific parameter
-checking. This subroutine expects to be given the parameters to validate in
-C<@_>. If all the parameters are valid, it will return the validated
-parameters (with defaults as appropriate), either as a list of key-value pairs
-or as a list of just values. If any of the parameters are invalid it will
-throw an exception.
+This returns a subroutine that implements the specific parameter checking. This
+subroutine expects to be given the parameters to validate in C<@_>. If all the
+parameters are valid, it will return the validated parameters (with defaults as
+appropriate), either as a list of key-value pairs or as a list of just values.
+If any of the parameters are invalid it will throw an exception.
 
-For validators expected named params, the generated subroutine accepts either
-a list of key-value pairs or a single hashref. Otherwise the validator expects
-a list of values.
+For validators expected named params, the generated subroutine accepts either a
+list of key-value pairs or a single hashref. Otherwise the validator expects a
+list of values.
 
 For now, you must shift off the invocant yourself.
 
@@ -236,17 +235,17 @@ If this is given, then the generated subroutine will be named using
 L<Sub::Util>. This is strongly recommended as it makes it possible to
 distinguish different check subroutines when profiling or in stack traces.
 
-This name will also be used in some exception messages, even if L<Sub::Util>
-is not available.
+This name will also be used in some exception messages, even if L<Sub::Util> is
+not available.
 
 Note that you must install L<Sub::Util> yourself separately, as it is not
 required by this distribution, in order to avoid requiring a compiler.
 
 =item * name_is_optional
 
-If this is true, then the name is ignored when C<Sub::Util> is not
-installed. If this is false, then passing a name when L<Sub::Util> cannot be
-loaded causes an exception.
+If this is true, then the name is ignored when C<Sub::Util> is not installed.
+If this is false, then passing a name when L<Sub::Util> cannot be loaded causes
+an exception.
 
 This is useful for CPAN modules where you want to set a name if you can, but
 you do not want to add a prerequisite on L<Sub::Util>.
@@ -265,3 +264,4 @@ This returns a two element list. The first is a string containing the source
 code for the generated sub. The second is a hashref of "environment" variables
 to be used when generating the subroutine. These are the arguments that are
 passed to L<Eval::Closure>.
+

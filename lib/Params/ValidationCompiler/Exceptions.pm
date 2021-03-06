@@ -72,3 +72,4 @@ This is the value that failed the type constraint check.
 =head3 $e->type
 
 This is the type constraint object that did not accept the value.
+
