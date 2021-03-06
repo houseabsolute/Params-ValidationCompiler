@@ -37,7 +37,7 @@ like(
 like(
     dies { validation_for( params => bless {}, 'Foo' ) },
     qr/\QThe "params" parameter when creating a parameter validator must be a hashref or arrayref, you passed a Foo object\E$location_re/,
-    'got expected error message when validation_for is called params as anobject'
+    'got expected error message when validation_for is called params as an object'
 );
 
 like(
