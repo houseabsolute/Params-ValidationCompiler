@@ -5,7 +5,7 @@ use Test2::V0;
 use Test2::Plugin::NoWarnings;
 
 use Params::ValidationCompiler qw( validation_for );
-use Scalar::Util qw( blessed );
+use Scalar::Util               qw( blessed );
 use Specio::Library::Builtins;
 
 for my $want_cxsa ( 0, 1 ) {

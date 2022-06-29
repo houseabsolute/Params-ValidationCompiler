@@ -5,13 +5,13 @@ use warnings;
 
 our $VERSION = '0.31';
 
-use Carp qw( croak );
-use Eval::Closure qw( eval_closure );
+use Carp            qw( croak );
+use Eval::Closure   qw( eval_closure );
 use List::Util 1.29 qw( pairkeys pairvalues );
 use Params::ValidationCompiler::Exceptions;
 use Scalar::Util qw( blessed looks_like_number reftype );
-use overload ();
-use B qw( perlstring );
+use overload     ();
+use B            qw( perlstring );
 
 our @CARP_NOT = ( 'Params::ValidationCompiler', __PACKAGE__ );
 
