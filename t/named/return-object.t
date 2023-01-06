@@ -88,7 +88,7 @@ sub test_return_object {
 
         ok(
             !$ret->has_bar,
-            'predicated is created when requested'
+            'predicate is created when requested'
         );
     }
 }
