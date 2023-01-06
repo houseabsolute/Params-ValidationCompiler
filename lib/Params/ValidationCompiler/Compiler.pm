@@ -36,6 +36,7 @@ BEGIN {
 
     my $has_cxsa = eval {
         require Class::XSAccessor;
+        Class::XSAccessor->VERSION(1.17);
         1;
     };
 
