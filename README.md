@@ -229,8 +229,6 @@ passed to [Eval::Closure](https://metacpan.org/pod/Eval%3A%3AClosure).
 
 Bugs may be submitted at [https://github.com/houseabsolute/Params-ValidationCompiler/issues](https://github.com/houseabsolute/Params-ValidationCompiler/issues).
 
-I am also usually active on IRC as 'autarch' on `irc://irc.perl.org`.
-
 # SOURCE
 
 The source code repository for Params-ValidationCompiler can be found at [https://github.com/houseabsolute/Params-ValidationCompiler](https://github.com/houseabsolute/Params-ValidationCompiler).
@@ -250,7 +248,7 @@ software much more, unless I get so many donations that I can consider working
 on free software full time (let's all have a chuckle at that together).
 
 To donate, log into PayPal and send money to autarch@urth.org, or use the
-button at [https://www.urth.org/fs-donation.html](https://www.urth.org/fs-donation.html).
+button at [https://houseabsolute.com/foss-donations/](https://houseabsolute.com/foss-donations/).
 
 # AUTHOR
 
@@ -264,7 +262,7 @@ Dave Rolsky <autarch@urth.org>
 
 # COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2016 - 2021 by Dave Rolsky.
+This software is Copyright (c) 2016 - 2023 by Dave Rolsky.
 
 This is free software, licensed under:
 
