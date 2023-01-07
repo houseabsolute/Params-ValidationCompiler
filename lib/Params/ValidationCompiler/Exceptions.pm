@@ -3,7 +3,7 @@ package Params::ValidationCompiler::Exceptions;
 use strict;
 use warnings;
 
-our $VERSION = '0.31';
+our $VERSION = '0.32';
 
 use Exception::Class (
     'Params::ValidationCompiler::Exception::BadArguments',
