@@ -118,7 +118,7 @@
 0.16     2016-11-03
 
 - Moose and Specio types (and coercions) which provide variables to close over
-  when being inlined did not always compile properly. Most notable, this was
+  when being inlined did not always compile properly. Most notably, this was
   not being handled at all for Moose types, and not completely handled for
   Specio coercions.
 
