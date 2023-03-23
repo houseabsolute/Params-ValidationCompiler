@@ -194,7 +194,7 @@
   if the object overloads hash dereferencing then the overloading is
   used. Reported by Mark Fowler. GitHub #3.
 
-- Renamed compile() to validation_for(). The latter is not a very specific
+- Renamed compile() to validation_for(). The former is not a very specific
   name. Requested by Mark Fowler. GitHub #1.
 
 
